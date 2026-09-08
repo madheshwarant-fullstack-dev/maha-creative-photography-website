@@ -69,20 +69,72 @@ function MyBookings() {
         fetchMyBookings();
     }, []);
 
-    const getStatusClass = (status) => {
+    // ================= STATUS DETAILS =================
+
+    const getStatusDetails = (status) => {
         switch (status) {
             case "Confirmed":
-                return "bg-success";
+                return {
+                    icon: "✓",
+                    className: "bg-success",
+                    textClass: "text-success",
+                };
 
             case "Completed":
-                return "bg-primary";
+                return {
+                    icon: "✓",
+                    className: "bg-primary",
+                    textClass: "text-primary",
+                };
 
             case "Cancelled":
-                return "bg-danger";
+                return {
+                    icon: "✕",
+                    className: "bg-danger",
+                    textClass: "text-danger",
+                };
 
             default:
-                return "bg-warning text-dark";
+                return {
+                    icon: "⏳",
+                    className: "bg-warning text-dark",
+                    textClass: "text-warning",
+                };
         }
+    };
+
+    // ================= STATUS PROGRESS =================
+
+    const getStatusStep = (status) => {
+        switch (status) {
+            case "Pending":
+                return 1;
+
+            case "Confirmed":
+                return 2;
+
+            case "Completed":
+                return 3;
+
+            case "Cancelled":
+                return 0;
+
+            default:
+                return 1;
+        }
+    };
+
+    // ================= DATE FORMAT =================
+
+    const formatDate = (date) => {
+        return new Date(date).toLocaleDateString(
+            "en-IN",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+            }
+        );
     };
 
     if (loading) {
@@ -131,7 +183,8 @@ function MyBookings() {
         <section className="py-5">
             <div className="container">
 
-                {/* Heading */}
+                {/* ================= HEADING ================= */}
+
                 <div className="text-center mb-5">
                     <h2 className="fw-bold">
                         My Bookings
@@ -142,11 +195,17 @@ function MyBookings() {
                     </p>
                 </div>
 
-                {/* No bookings */}
+                {/* ================= NO BOOKINGS ================= */}
+
                 {bookings.length === 0 ? (
                     <div className="text-center py-5">
+
                         <div className="mb-3">
-                            <span style={{ fontSize: "60px" }}>
+                            <span
+                                style={{
+                                    fontSize: "60px",
+                                }}
+                            >
                                 📸
                             </span>
                         </div>
@@ -165,89 +224,277 @@ function MyBookings() {
                         >
                             Explore Packages
                         </button>
+
                     </div>
                 ) : (
+
+                    /* ================= BOOKINGS ================= */
+
                     <div className="row g-4">
 
-                        {bookings.map((booking) => (
-                            <div
-                                className="col-md-6 col-lg-4"
-                                key={booking._id}
-                            >
-                                <div className="card h-100 shadow-sm border-0">
+                        {bookings.map((booking) => {
+                            const statusDetails =
+                                getStatusDetails(
+                                    booking.status
+                                );
 
-                                    <div className="card-body">
+                            const currentStep =
+                                getStatusStep(
+                                    booking.status
+                                );
 
-                                        <div className="d-flex justify-content-between align-items-start mb-3">
+                            return (
+                                <div
+                                    className="col-md-6 col-lg-4"
+                                    key={booking._id}
+                                >
 
-                                            <h5 className="card-title fw-bold mb-0">
-                                                {booking.packageName ||
-                                                    "Photography Booking"}
-                                            </h5>
+                                    <div className="card h-100 border-0 shadow-sm">
 
-                                            <span
-                                                className={`badge ${getStatusClass(
-                                                    booking.status
-                                                )}`}
-                                            >
-                                                {booking.status}
-                                            </span>
+                                        <div className="card-body p-4">
 
-                                        </div>
+                                            {/* ================= TITLE ================= */}
 
-                                        <hr />
+                                            <div className="d-flex justify-content-between align-items-start gap-2 mb-3">
 
-                                        <p className="mb-2">
-                                            <strong>
-                                                Event:
-                                            </strong>{" "}
-                                            {booking.eventType}
-                                        </p>
+                                                <h5 className="card-title fw-bold mb-0">
+                                                    {booking.packageName ||
+                                                        "Photography Booking"}
+                                                </h5>
 
-                                        <p className="mb-2">
-                                            <strong>
-                                                Date:
-                                            </strong>{" "}
-                                            {new Date(
-                                                booking.eventDate
-                                            ).toLocaleDateString()}
-                                        </p>
+                                                <span
+                                                    className={`badge ${statusDetails.className}`}
+                                                >
+                                                    {statusDetails.icon}{" "}
+                                                    {booking.status}
+                                                </span>
 
-                                        <p className="mb-2">
-                                            <strong>
-                                                Location:
-                                            </strong>{" "}
-                                            {booking.location}
-                                        </p>
+                                            </div>
 
-                                        {booking.packagePrice > 0 && (
+                                            <hr />
+
+                                            {/* ================= BOOKING DETAILS ================= */}
+
                                             <p className="mb-2">
                                                 <strong>
-                                                    Package Price:
+                                                    Event:
                                                 </strong>{" "}
-                                                ₹
-                                                {Number(
-                                                    booking.packagePrice
-                                                ).toLocaleString(
-                                                    "en-IN"
+                                                {booking.eventType}
+                                            </p>
+
+                                            <p className="mb-2">
+                                                <strong>
+                                                    Date:
+                                                </strong>{" "}
+                                                {formatDate(
+                                                    booking.eventDate
                                                 )}
                                             </p>
-                                        )}
 
-                                        {booking.message && (
-                                            <p className="mb-0">
+                                            <p className="mb-2">
                                                 <strong>
-                                                    Message:
+                                                    Location:
                                                 </strong>{" "}
-                                                {booking.message}
+                                                {booking.location}
                                             </p>
-                                        )}
+
+                                            {booking.packagePrice >
+                                                0 && (
+                                                <p className="mb-2">
+                                                    <strong>
+                                                        Package Price:
+                                                    </strong>{" "}
+                                                    ₹
+                                                    {Number(
+                                                        booking.packagePrice
+                                                    ).toLocaleString(
+                                                        "en-IN"
+                                                    )}
+                                                </p>
+                                            )}
+
+                                            {booking.message && (
+                                                <p className="mb-3">
+                                                    <strong>
+                                                        Message:
+                                                    </strong>{" "}
+                                                    {booking.message}
+                                                </p>
+                                            )}
+
+                                            {/* ================= STATUS TRACKER ================= */}
+
+                                            {booking.status !==
+                                                "Cancelled" && (
+                                                <div className="mt-4">
+
+                                                    <small className="fw-semibold">
+                                                        Booking Status
+                                                    </small>
+
+                                                    <div className="mt-3">
+
+                                                        {/* Pending */}
+
+                                                        <div className="d-flex align-items-center">
+
+                                                            <div
+                                                                className={`rounded-circle d-flex align-items-center justify-content-center ${
+                                                                    currentStep >=
+                                                                    1
+                                                                        ? "bg-warning text-dark"
+                                                                        : "bg-light text-muted"
+                                                                }`}
+                                                                style={{
+                                                                    width: "32px",
+                                                                    height: "32px",
+                                                                    minWidth: "32px",
+                                                                }}
+                                                            >
+                                                                1
+                                                            </div>
+
+                                                            <span
+                                                                className={`ms-2 small ${
+                                                                    currentStep >=
+                                                                    1
+                                                                        ? "fw-semibold"
+                                                                        : "text-muted"
+                                                                }`}
+                                                            >
+                                                                Pending
+                                                            </span>
+
+                                                        </div>
+
+                                                        {/* Connector */}
+
+                                                        <div
+                                                            style={{
+                                                                width: "2px",
+                                                                height: "20px",
+                                                                marginLeft:
+                                                                    "15px",
+                                                                background:
+                                                                    currentStep >=
+                                                                    2
+                                                                        ? "#198754"
+                                                                        : "#dee2e6",
+                                                            }}
+                                                        />
+
+                                                        {/* Confirmed */}
+
+                                                        <div className="d-flex align-items-center">
+
+                                                            <div
+                                                                className={`rounded-circle d-flex align-items-center justify-content-center ${
+                                                                    currentStep >=
+                                                                    2
+                                                                        ? "bg-success text-white"
+                                                                        : "bg-light text-muted"
+                                                                }`}
+                                                                style={{
+                                                                    width: "32px",
+                                                                    height: "32px",
+                                                                    minWidth: "32px",
+                                                                }}
+                                                            >
+                                                                2
+                                                            </div>
+
+                                                            <span
+                                                                className={`ms-2 small ${
+                                                                    currentStep >=
+                                                                    2
+                                                                        ? "fw-semibold"
+                                                                        : "text-muted"
+                                                                }`}
+                                                            >
+                                                                Confirmed
+                                                            </span>
+
+                                                        </div>
+
+                                                        {/* Connector */}
+
+                                                        <div
+                                                            style={{
+                                                                width: "2px",
+                                                                height: "20px",
+                                                                marginLeft:
+                                                                    "15px",
+                                                                background:
+                                                                    currentStep >=
+                                                                    3
+                                                                        ? "#0d6efd"
+                                                                        : "#dee2e6",
+                                                            }}
+                                                        />
+
+                                                        {/* Completed */}
+
+                                                        <div className="d-flex align-items-center">
+
+                                                            <div
+                                                                className={`rounded-circle d-flex align-items-center justify-content-center ${
+                                                                    currentStep >=
+                                                                    3
+                                                                        ? "bg-primary text-white"
+                                                                        : "bg-light text-muted"
+                                                                }`}
+                                                                style={{
+                                                                    width: "32px",
+                                                                    height: "32px",
+                                                                    minWidth: "32px",
+                                                                }}
+                                                            >
+                                                                3
+                                                            </div>
+
+                                                            <span
+                                                                className={`ms-2 small ${
+                                                                    currentStep >=
+                                                                    3
+                                                                        ? "fw-semibold"
+                                                                        : "text-muted"
+                                                                }`}
+                                                            >
+                                                                Completed
+                                                            </span>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            )}
+
+                                            {/* ================= CANCELLED ================= */}
+
+                                            {booking.status ===
+                                                "Cancelled" && (
+                                                <div className="alert alert-danger mt-4 mb-0 py-2">
+
+                                                    <strong>
+                                                        ✕ Booking Cancelled
+                                                    </strong>
+
+                                                    <div className="small mt-1">
+                                                        This booking has
+                                                        been cancelled.
+                                                    </div>
+
+                                                </div>
+                                            )}
+
+                                        </div>
 
                                     </div>
 
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
 
                     </div>
                 )}

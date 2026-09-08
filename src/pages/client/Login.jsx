@@ -13,7 +13,8 @@ function Login() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // Input change
+    // ================= INPUT CHANGE =================
+
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -21,7 +22,8 @@ function Login() {
         });
     };
 
-    // Login submit
+    // ================= LOGIN SUBMIT =================
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -47,15 +49,38 @@ function Login() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || "Login failed");
+                throw new Error(
+                    data.message || "Login failed"
+                );
             }
 
-            // Save JWT token
+            // ================= BLOCK ADMIN FROM CLIENT LOGIN =================
+
+            if (
+                data.user &&
+                data.user.role === "admin"
+            ) {
+                setError(
+                    "Admin account cannot login here. Please use Admin Login."
+                );
+
+                // Make sure admin credentials are NOT stored
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+
+                setLoading(false);
+                return;
+            }
+
+            // ================= SAVE CLIENT LOGIN =================
+
             if (data.token) {
-                localStorage.setItem("token", data.token);
+                localStorage.setItem(
+                    "token",
+                    data.token
+                );
             }
 
-            // Save user details
             if (data.user) {
                 localStorage.setItem(
                     "user",
@@ -65,13 +90,22 @@ function Login() {
 
             setMessage("Login successful!");
 
-            // Go to profile
+            // ================= GO TO PROFILE =================
+
             setTimeout(() => {
                 navigate("/profile");
             }, 1000);
 
         } catch (error) {
-            setError(error.message);
+            console.error(
+                "Login error:",
+                error
+            );
+
+            setError(
+                error.message ||
+                    "Login failed"
+            );
         } finally {
             setLoading(false);
         }
@@ -88,7 +122,8 @@ function Login() {
 
                         <div className="auth-card">
 
-                            {/* Logo */}
+                            {/* ================= LOGO ================= */}
+
                             <div className="text-center mb-4">
 
                                 <img
@@ -97,7 +132,9 @@ function Login() {
                                     className="auth-logo"
                                 />
 
-                                <h2>Client Login</h2>
+                                <h2>
+                                    Client Login
+                                </h2>
 
                                 <p className="text-muted">
                                     Login to your account
@@ -105,24 +142,32 @@ function Login() {
 
                             </div>
 
-                            {/* Success Message */}
+                            {/* ================= SUCCESS MESSAGE ================= */}
+
                             {message && (
                                 <div className="alert alert-success">
                                     {message}
                                 </div>
                             )}
 
-                            {/* Error Message */}
+                            {/* ================= ERROR MESSAGE ================= */}
+
                             {error && (
                                 <div className="alert alert-danger">
                                     {error}
                                 </div>
                             )}
 
-                            {/* Login Form */}
-                            <form onSubmit={handleSubmit}>
+                            {/* ================= LOGIN FORM ================= */}
 
-                                {/* Email */}
+                            <form
+                                onSubmit={
+                                    handleSubmit
+                                }
+                            >
+
+                                {/* EMAIL */}
+
                                 <div className="mb-3">
 
                                     <label className="form-label">
@@ -134,14 +179,19 @@ function Login() {
                                         name="email"
                                         className="form-control"
                                         placeholder="Enter your email"
-                                        value={formData.email}
-                                        onChange={handleChange}
+                                        value={
+                                            formData.email
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
                                         required
                                     />
 
                                 </div>
 
-                                {/* Password */}
+                                {/* PASSWORD */}
+
                                 <div className="mb-3">
 
                                     <label className="form-label">
@@ -153,25 +203,35 @@ function Login() {
                                         name="password"
                                         className="form-control"
                                         placeholder="Enter your password"
-                                        value={formData.password}
-                                        onChange={handleChange}
+                                        value={
+                                            formData.password
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
                                         required
                                     />
 
                                 </div>
 
-                                {/* Login Button */}
+                                {/* LOGIN BUTTON */}
+
                                 <button
                                     type="submit"
                                     className="btn btn-pink w-100"
-                                    disabled={loading}
+                                    disabled={
+                                        loading
+                                    }
                                 >
-                                    {loading ? "Logging in..." : "Login"}
+                                    {loading
+                                        ? "Logging in..."
+                                        : "Login"}
                                 </button>
 
                             </form>
 
-                            {/* Signup */}
+                            {/* ================= SIGNUP ================= */}
+
                             <p className="text-center mt-4">
 
                                 Don't have an account?{" "}

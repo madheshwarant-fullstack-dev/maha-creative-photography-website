@@ -84,7 +84,6 @@ function Navbar() {
                     />
                 </Link>
 
-
                 {/* ================= MOBILE TOGGLE ================= */}
 
                 <button
@@ -99,14 +98,12 @@ function Navbar() {
                     <span className="navbar-toggler-icon"></span>
                 </button>
 
-
                 {/* ================= NAVIGATION ================= */}
 
                 <div
                     className="collapse navbar-collapse"
                     id="mainNavbar"
                 >
-
                     <ul className="navbar-nav ms-auto align-items-lg-center">
 
                         {/* HOME */}
@@ -120,7 +117,6 @@ function Navbar() {
                             </Link>
                         </li>
 
-
                         {/* ABOUT */}
 
                         <li className="nav-item">
@@ -131,7 +127,6 @@ function Navbar() {
                                 About
                             </Link>
                         </li>
-
 
                         {/* SERVICES */}
 
@@ -144,7 +139,6 @@ function Navbar() {
                             </Link>
                         </li>
 
-
                         {/* GALLERY */}
 
                         <li className="nav-item">
@@ -155,7 +149,6 @@ function Navbar() {
                                 Gallery
                             </Link>
                         </li>
-
 
                         {/* PACKAGES */}
 
@@ -168,7 +161,6 @@ function Navbar() {
                             </Link>
                         </li>
 
-
                         {/* CONTACT */}
 
                         <li className="nav-item">
@@ -180,11 +172,12 @@ function Navbar() {
                             </Link>
                         </li>
 
-
                         {/* ================= LOGGED OUT ================= */}
 
                         {!isLoggedIn && (
                             <>
+                                {/* LOGIN */}
+
                                 <li className="nav-item ms-lg-2">
                                     <Link
                                         className="btn btn-outline-light btn-sm px-3"
@@ -193,9 +186,19 @@ function Navbar() {
                                         Login
                                     </Link>
                                 </li>
+
+                                {/* SIGNUP */}
+
+                                <li className="nav-item ms-lg-2">
+                                    <Link
+                                        className="btn btn-pink btn-sm px-3"
+                                        to="/signup"
+                                    >
+                                        Signup
+                                    </Link>
+                                </li>
                             </>
                         )}
-
 
                         {/* ================= LOGGED IN ================= */}
 
@@ -225,7 +228,6 @@ function Navbar() {
                                         </Link>
                                     </li>
 
-
                                     {/* MY BOOKINGS */}
 
                                     <li>
@@ -237,11 +239,9 @@ function Navbar() {
                                         </Link>
                                     </li>
 
-
                                     <li>
                                         <hr className="dropdown-divider" />
                                     </li>
-
 
                                     {/* LOGOUT */}
 
@@ -262,11 +262,9 @@ function Navbar() {
                         )}
 
                     </ul>
-
                 </div>
 
             </div>
-
         </nav>
     );
 }

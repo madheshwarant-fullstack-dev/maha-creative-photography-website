@@ -17,6 +17,11 @@ function PackageManagement() {
         highlights: "",
     });
 
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState("");
+
+    // IMPORTANT:
+    // Store packageId, NOT MongoDB _id
     const [editingId, setEditingId] = useState(null);
 
     // ================= FETCH PACKAGES =================
@@ -32,7 +37,7 @@ function PackageManagement() {
             const data = await response.json();
 
             if (data.success) {
-                setPackages(data.packages);
+                setPackages(data.packages || []);
             }
         } catch (error) {
             console.error(
@@ -59,27 +64,113 @@ function PackageManagement() {
         });
     };
 
-    // ================= ADD / UPDATE PACKAGE =================
+    // ================= HANDLE IMAGE =================
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+
+        if (!file) {
+            setImageFile(null);
+            setImagePreview("");
+            return;
+        }
+
+        setImageFile(file);
+
+        const previewUrl =
+            URL.createObjectURL(file);
+
+        setImagePreview(previewUrl);
+    };
+
+    // ================= ADD / UPDATE =================
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const packageData = {
-            packageId: form.packageId,
-            name: form.name,
-            category: form.category,
-            delivery: form.delivery,
-            price: Number(form.price),
-            image: form.image,
-            description: form.description,
-            highlights: form.highlights
-                .split("\n")
-                .map((item) => item.trim())
-                .filter((item) => item !== ""),
-        };
-
         try {
-            const token = localStorage.getItem("token");
+            const token =
+                localStorage.getItem("token");
+
+            if (!token) {
+                alert("Admin login required.");
+                return;
+            }
+
+            // ================= VALIDATION =================
+
+            if (
+                !form.packageId ||
+                !form.name ||
+                !form.category ||
+                !form.delivery ||
+                form.price === ""
+            ) {
+                alert(
+                    "Please fill all required fields."
+                );
+                return;
+            }
+
+            const formData = new FormData();
+
+            // ================= BASIC DATA =================
+
+            formData.append(
+                "packageId",
+                form.packageId
+            );
+
+            formData.append(
+                "name",
+                form.name
+            );
+
+            formData.append(
+                "category",
+                form.category
+            );
+
+            formData.append(
+                "delivery",
+                form.delivery
+            );
+
+            formData.append(
+                "price",
+                Number(form.price)
+            );
+
+            formData.append(
+                "description",
+                form.description
+            );
+
+            // Backend currently accepts comma separated
+            // highlights, so convert each line to comma.
+            const formattedHighlights =
+                form.highlights
+                    .split("\n")
+                    .map((item) => item.trim())
+                    .filter(Boolean)
+                    .join(",");
+
+            formData.append(
+                "highlights",
+                formattedHighlights
+            );
+
+            // ================= NEW IMAGE =================
+
+            // IMPORTANT:
+            // Only send image when a NEW file is selected.
+            // Existing image is already stored in MongoDB.
+            if (imageFile) {
+                formData.append(
+                    "image",
+                    imageFile
+                );
+            }
 
             let response;
 
@@ -91,10 +182,9 @@ function PackageManagement() {
                     {
                         method: "PUT",
                         headers: {
-                            "Content-Type": "application/json",
                             Authorization: `Bearer ${token}`,
                         },
-                        body: JSON.stringify(packageData),
+                        body: formData,
                     }
                 );
             }
@@ -107,15 +197,16 @@ function PackageManagement() {
                     {
                         method: "POST",
                         headers: {
-                            "Content-Type": "application/json",
                             Authorization: `Bearer ${token}`,
                         },
-                        body: JSON.stringify(packageData),
+                        body: formData,
                     }
                 );
             }
 
             const data = await response.json();
+
+            // ================= ERROR =================
 
             if (!response.ok) {
                 alert(
@@ -125,6 +216,8 @@ function PackageManagement() {
                 return;
             }
 
+            // ================= SUCCESS =================
+
             alert(
                 editingId
                     ? "Package updated successfully!"
@@ -132,8 +225,8 @@ function PackageManagement() {
             );
 
             resetForm();
-            fetchPackages();
 
+            await fetchPackages();
         } catch (error) {
             console.error(
                 "Save package error:",
@@ -147,20 +240,28 @@ function PackageManagement() {
     // ================= EDIT PACKAGE =================
 
     const handleEdit = (pkg) => {
-        setEditingId(pkg._id);
+        // IMPORTANT:
+        // Backend uses packageId, not MongoDB _id
+        setEditingId(pkg.packageId);
 
         setForm({
             packageId: pkg.packageId || "",
             name: pkg.name || "",
-            category: pkg.category || "AFFORDABLE",
+            category:
+                pkg.category || "AFFORDABLE",
             delivery: pkg.delivery || "",
             price: pkg.price || "",
             image: pkg.image || "",
-            description: pkg.description || "",
-            highlights: Array.isArray(pkg.highlights)
-                ? pkg.highlights.join("\n")
-                : "",
+            description:
+                pkg.description || "",
+            highlights:
+                Array.isArray(pkg.highlights)
+                    ? pkg.highlights.join("\n")
+                    : "",
         });
+
+        setImageFile(null);
+        setImagePreview("");
 
         window.scrollTo({
             top: 0,
@@ -170,18 +271,27 @@ function PackageManagement() {
 
     // ================= DELETE PACKAGE =================
 
-    const handleDelete = async (id) => {
-        const confirmDelete = window.confirm(
-            "Are you sure you want to delete this package?"
-        );
+    const handleDelete = async (packageId) => {
+        const confirmDelete =
+            window.confirm(
+                "Are you sure you want to delete this package?"
+            );
 
         if (!confirmDelete) return;
 
         try {
-            const token = localStorage.getItem("token");
+            const token =
+                localStorage.getItem("token");
 
+            if (!token) {
+                alert("Admin login required.");
+                return;
+            }
+
+            // IMPORTANT:
+            // Backend expects packageId
             const response = await fetch(
-                `${API_URL}/api/packages/${id}`,
+                `${API_URL}/api/packages/${packageId}`,
                 {
                     method: "DELETE",
                     headers: {
@@ -204,8 +314,7 @@ function PackageManagement() {
                 "Package deleted successfully!"
             );
 
-            fetchPackages();
-
+            await fetchPackages();
         } catch (error) {
             console.error(
                 "Delete package error:",
@@ -231,6 +340,18 @@ function PackageManagement() {
             description: "",
             highlights: "",
         });
+
+        setImageFile(null);
+        setImagePreview("");
+
+        const fileInput =
+            document.getElementById(
+                "packageImage"
+            );
+
+        if (fileInput) {
+            fileInput.value = "";
+        }
     };
 
     // ================= IMAGE URL =================
@@ -267,7 +388,8 @@ function PackageManagement() {
                     </h2>
 
                     <p className="text-muted mb-0">
-                        Add, edit and manage photography packages
+                        Add, edit and manage
+                        photography packages
                     </p>
                 </div>
 
@@ -296,7 +418,7 @@ function PackageManagement() {
 
                         <div className="row g-3">
 
-                            {/* Package ID */}
+                            {/* ================= PACKAGE ID ================= */}
 
                             <div className="col-md-6">
 
@@ -316,11 +438,22 @@ function PackageManagement() {
                                         handleChange
                                     }
                                     required
+                                    disabled={
+                                        !!editingId
+                                    }
                                 />
+
+                                {editingId && (
+                                    <small className="text-muted">
+                                        Package ID cannot
+                                        be changed while
+                                        editing.
+                                    </small>
+                                )}
 
                             </div>
 
-                            {/* Package Name */}
+                            {/* ================= PACKAGE NAME ================= */}
 
                             <div className="col-md-6">
 
@@ -333,7 +466,9 @@ function PackageManagement() {
                                     name="name"
                                     className="form-control"
                                     placeholder="Package Mini"
-                                    value={form.name}
+                                    value={
+                                        form.name
+                                    }
                                     onChange={
                                         handleChange
                                     }
@@ -342,7 +477,7 @@ function PackageManagement() {
 
                             </div>
 
-                            {/* Category */}
+                            {/* ================= CATEGORY ================= */}
 
                             <div className="col-md-4">
 
@@ -360,7 +495,6 @@ function PackageManagement() {
                                         handleChange
                                     }
                                 >
-
                                     <option value="AFFORDABLE">
                                         AFFORDABLE
                                     </option>
@@ -368,12 +502,11 @@ function PackageManagement() {
                                     <option value="GRAND">
                                         GRAND
                                     </option>
-
                                 </select>
 
                             </div>
 
-                            {/* Delivery */}
+                            {/* ================= DELIVERY ================= */}
 
                             <div className="col-md-4">
 
@@ -397,7 +530,7 @@ function PackageManagement() {
 
                             </div>
 
-                            {/* Price */}
+                            {/* ================= PRICE ================= */}
 
                             <div className="col-md-4">
 
@@ -410,7 +543,9 @@ function PackageManagement() {
                                     name="price"
                                     className="form-control"
                                     placeholder="45000"
-                                    value={form.price}
+                                    value={
+                                        form.price
+                                    }
                                     onChange={
                                         handleChange
                                     }
@@ -419,28 +554,75 @@ function PackageManagement() {
 
                             </div>
 
-                            {/* Image URL */}
+                            {/* ================= IMAGE ================= */}
 
                             <div className="col-12">
 
-                                <label className="form-label">
-                                    Image URL
+                                <label
+                                    className="form-label"
+                                    htmlFor="packageImage"
+                                >
+                                    Package Image
                                 </label>
 
                                 <input
-                                    type="text"
+                                    id="packageImage"
+                                    type="file"
                                     name="image"
                                     className="form-control"
-                                    placeholder="/images/packages/silver.png"
-                                    value={form.image}
+                                    accept="image/*"
                                     onChange={
-                                        handleChange
+                                        handleImageChange
                                     }
                                 />
 
+                                <small className="text-muted">
+                                    {editingId
+                                        ? "Select a new image only if you want to replace the existing image."
+                                        : "Select a package image."}
+                                </small>
+
                             </div>
 
-                            {/* Description */}
+                            {/* ================= IMAGE PREVIEW ================= */}
+
+                            {(imagePreview ||
+                                form.image) && (
+
+                                <div className="col-12">
+
+                                    <label className="form-label">
+                                        Image Preview
+                                    </label>
+
+                                    <div>
+
+                                        <img
+                                            src={
+                                                imagePreview ||
+                                                getImageUrl(
+                                                    form.image
+                                                )
+                                            }
+                                            alt="Package Preview"
+                                            style={{
+                                                width: "220px",
+                                                height: "140px",
+                                                objectFit:
+                                                    "cover",
+                                                borderRadius:
+                                                    "8px",
+                                                border:
+                                                    "1px solid #ddd",
+                                            }}
+                                        />
+
+                                    </div>
+
+                                </div>
+                            )}
+
+                            {/* ================= DESCRIPTION ================= */}
 
                             <div className="col-12">
 
@@ -463,7 +645,7 @@ function PackageManagement() {
 
                             </div>
 
-                            {/* Highlights */}
+                            {/* ================= HIGHLIGHTS ================= */}
 
                             <div className="col-12">
 
@@ -489,14 +671,15 @@ Calendar`}
                                 />
 
                                 <small className="text-muted">
-                                    Enter one highlight per line
+                                    Enter one highlight
+                                    per line.
                                 </small>
 
                             </div>
 
                         </div>
 
-                        {/* Buttons */}
+                        {/* ================= BUTTONS ================= */}
 
                         <div className="mt-4">
 
@@ -513,7 +696,9 @@ Calendar`}
                                 <button
                                     type="button"
                                     className="btn btn-outline-secondary"
-                                    onClick={resetForm}
+                                    onClick={
+                                        resetForm
+                                    }
                                 >
                                     Cancel Edit
                                 </button>
@@ -524,7 +709,6 @@ Calendar`}
                     </form>
 
                 </div>
-
             </div>
 
             {/* ================= EXISTING PACKAGES ================= */}
@@ -541,9 +725,9 @@ Calendar`}
 
             </div>
 
-            {loading ? (
+            {/* ================= LOADING ================= */}
 
-                /* ================= LOADING ================= */
+            {loading ? (
 
                 <div className="text-center py-5">
 
@@ -564,8 +748,6 @@ Calendar`}
 
             ) : packages.length === 0 ? (
 
-                /* ================= NO PACKAGES ================= */
-
                 <div className="alert alert-info">
                     No packages found.
                 </div>
@@ -585,7 +767,9 @@ Calendar`}
 
                             <div className="card h-100 shadow-sm">
 
-                                {pkg.image && (
+                                {/* ================= IMAGE ================= */}
+
+                                {pkg.image ? (
                                     <img
                                         src={getImageUrl(
                                             pkg.image
@@ -594,15 +778,43 @@ Calendar`}
                                         alt={pkg.name}
                                         style={{
                                             height: "220px",
-                                            objectFit: "cover",
+                                            objectFit:
+                                                "cover",
+                                        }}
+                                        onError={(
+                                            e
+                                        ) => {
+                                            e.currentTarget.style.display =
+                                                "none";
                                         }}
                                     />
+                                ) : (
+                                    <div
+                                        style={{
+                                            height: "220px",
+                                            display:
+                                                "flex",
+                                            alignItems:
+                                                "center",
+                                            justifyContent:
+                                                "center",
+                                            background:
+                                                "#f5f5f5",
+                                            color: "#999",
+                                        }}
+                                    >
+                                        No Image
+                                    </div>
                                 )}
+
+                                {/* ================= BODY ================= */}
 
                                 <div className="card-body">
 
                                     <span className="badge bg-secondary mb-2">
-                                        {pkg.category}
+                                        {
+                                            pkg.category
+                                        }
                                     </span>
 
                                     <h5 className="fw-bold">
@@ -619,7 +831,9 @@ Calendar`}
                                     </h4>
 
                                     <p className="text-muted mb-2">
-                                        {pkg.delivery}
+                                        {
+                                            pkg.delivery
+                                        }
                                     </p>
 
                                     {pkg.description && (
@@ -630,26 +844,37 @@ Calendar`}
                                         </p>
                                     )}
 
-                                    <ul className="small ps-3">
+                                    {/* HIGHLIGHTS */}
 
-                                        {pkg.highlights?.map(
-                                            (
-                                                item,
-                                                index
-                                            ) => (
-                                                <li
-                                                    key={
+                                    {pkg.highlights &&
+                                        pkg.highlights
+                                            .length >
+                                            0 && (
+                                            <ul className="small ps-3">
+
+                                                {pkg.highlights.map(
+                                                    (
+                                                        item,
                                                         index
-                                                    }
-                                                >
-                                                    {item}
-                                                </li>
-                                            )
+                                                    ) => (
+                                                        <li
+                                                            key={
+                                                                index
+                                                            }
+                                                        >
+                                                            {
+                                                                item
+                                                            }
+                                                        </li>
+                                                    )
+                                                )}
+
+                                            </ul>
                                         )}
 
-                                    </ul>
-
                                 </div>
+
+                                {/* ================= ACTIONS ================= */}
 
                                 <div className="card-footer bg-white border-0 d-flex gap-2">
 
@@ -668,7 +893,7 @@ Calendar`}
                                         className="btn btn-outline-danger btn-sm"
                                         onClick={() =>
                                             handleDelete(
-                                                pkg._id
+                                                pkg.packageId
                                             )
                                         }
                                     >
@@ -684,7 +909,6 @@ Calendar`}
                     ))}
 
                 </div>
-
             )}
 
         </div>

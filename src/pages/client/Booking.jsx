@@ -90,7 +90,7 @@ function Booking() {
         fetchPackages();
     }, []);
 
-    // ================= SELECT PACKAGE =================
+    // ================= SELECT PACKAGE FROM URL =================
 
     useEffect(() => {
         if (packageId && packages.length > 0) {
@@ -126,7 +126,9 @@ function Booking() {
                 item.packageId === selectedId
         );
 
-        setSelectedPackage(foundPackage || null);
+        setSelectedPackage(
+            foundPackage || null
+        );
     };
 
     // ================= SUBMIT BOOKING =================
@@ -145,17 +147,23 @@ function Booking() {
         }
 
         if (!formData.eventType) {
-            setError("Please select an event type.");
+            setError(
+                "Please select an event type."
+            );
             return;
         }
 
         if (!formData.eventDate) {
-            setError("Please select an event date.");
+            setError(
+                "Please select an event date."
+            );
             return;
         }
 
         if (!formData.location.trim()) {
-            setError("Please enter the event location.");
+            setError(
+                "Please enter the event location."
+            );
             return;
         }
 
@@ -187,8 +195,11 @@ function Booking() {
                     method: "POST",
 
                     headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
+                        "Content-Type":
+                            "application/json",
+
+                        Authorization:
+                            `Bearer ${token}`,
                     },
 
                     body: JSON.stringify(
@@ -201,8 +212,13 @@ function Booking() {
 
             if (!response.ok) {
                 if (response.status === 401) {
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("user");
+                    localStorage.removeItem(
+                        "token"
+                    );
+
+                    localStorage.removeItem(
+                        "user"
+                    );
 
                     navigate("/login");
                     return;
@@ -248,6 +264,13 @@ function Booking() {
             setLoading(false);
         }
     };
+
+    // ================= TODAY DATE =================
+
+    const today =
+        new Date()
+            .toISOString()
+            .split("T")[0];
 
     return (
         <section className="py-5">
@@ -310,6 +333,7 @@ function Booking() {
                                     {/* ================= NAME ================= */}
 
                                     <div className="mb-3">
+
                                         <label className="form-label">
                                             Full Name
                                         </label>
@@ -326,11 +350,13 @@ function Booking() {
                                             }
                                             required
                                         />
+
                                     </div>
 
                                     {/* ================= EMAIL ================= */}
 
                                     <div className="mb-3">
+
                                         <label className="form-label">
                                             Email
                                         </label>
@@ -347,11 +373,13 @@ function Booking() {
                                             }
                                             required
                                         />
+
                                     </div>
 
                                     {/* ================= PHONE ================= */}
 
                                     <div className="mb-3">
+
                                         <label className="form-label">
                                             Phone
                                         </label>
@@ -368,11 +396,13 @@ function Booking() {
                                             }
                                             required
                                         />
+
                                     </div>
 
                                     {/* ================= PACKAGE ================= */}
 
                                     <div className="mb-3">
+
                                         <label className="form-label">
                                             Select Package
                                         </label>
@@ -393,6 +423,7 @@ function Booking() {
                                                     handlePackageChange
                                                 }
                                             >
+
                                                 <option value="">
                                                     Select a package
                                                 </option>
@@ -421,14 +452,17 @@ function Booking() {
                                                         </option>
                                                     )
                                                 )}
+
                                             </select>
                                         )}
+
                                     </div>
 
                                     {/* ================= SELECTED PACKAGE ================= */}
 
                                     {selectedPackage && (
                                         <div className="alert alert-light border mb-4">
+
                                             <h5 className="mb-2">
                                                 {
                                                     selectedPackage.name
@@ -464,12 +498,14 @@ function Booking() {
                                                     "en-IN"
                                                 )}
                                             </p>
+
                                         </div>
                                     )}
 
                                     {/* ================= EVENT TYPE ================= */}
 
                                     <div className="mb-3">
+
                                         <label className="form-label">
                                             Event Type
                                         </label>
@@ -485,6 +521,7 @@ function Booking() {
                                             }
                                             required
                                         >
+
                                             <option value="">
                                                 Select event type
                                             </option>
@@ -520,12 +557,15 @@ function Booking() {
                                             <option value="Other">
                                                 Other
                                             </option>
+
                                         </select>
+
                                     </div>
 
                                     {/* ================= DATE ================= */}
 
                                     <div className="mb-3">
+
                                         <label className="form-label">
                                             Event Date
                                         </label>
@@ -540,13 +580,16 @@ function Booking() {
                                             onChange={
                                                 handleChange
                                             }
+                                            min={today}
                                             required
                                         />
+
                                     </div>
 
                                     {/* ================= LOCATION ================= */}
 
                                     <div className="mb-3">
+
                                         <label className="form-label">
                                             Event Location
                                         </label>
@@ -564,11 +607,13 @@ function Booking() {
                                             }
                                             required
                                         />
+
                                     </div>
 
                                     {/* ================= MESSAGE ================= */}
 
                                     <div className="mb-4">
+
                                         <label className="form-label">
                                             Additional Message
                                         </label>
@@ -585,6 +630,7 @@ function Booking() {
                                                 handleChange
                                             }
                                         ></textarea>
+
                                     </div>
 
                                     {/* ================= SUBMIT ================= */}
