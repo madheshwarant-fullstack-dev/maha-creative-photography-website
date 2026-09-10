@@ -11,35 +11,35 @@ function Services() {
       price: "₹15,000",
     },
     {
-      image: "/images/services/birthday.jpg",
+      image: "/images/gallery/birthday1.png",
       title: "Birthday Photography",
       description:
         "Professional photography for memorable birthday celebrations.",
       price: "₹5,000",
     },
     {
-      image: "/images/services/baby.jpg",
+      image: "/images/gallery/baby.jpeg",
       title: "Baby Photography",
       description:
         "Creative and adorable photography for your little ones.",
       price: "₹7,000",
     },
     {
-      image: "/images/services/prewedding.jpg",
+      image: "/images/gallery/prewedding.jpeg",
       title: "Pre-Wedding Photography",
       description:
         "Romantic pre-wedding photoshoots at beautiful locations.",
       price: "₹10,000",
     },
     {
-      image: "/images/services/model.jpg",
+      image: "/images/gallery/model.jpeg",
       title: "Model Photography",
       description:
         "Professional portfolio and fashion photography sessions.",
       price: "₹8,000",
     },
     {
-      image: "/images/services/event.jpg",
+      image: "/images/gallery/baby shower.jpeg",
       title: "Event Photography",
       description:
         "Capture your special events with professional photography.",

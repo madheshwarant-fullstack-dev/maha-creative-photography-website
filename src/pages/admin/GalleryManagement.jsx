@@ -386,6 +386,10 @@ function GalleryManagement() {
                                         Baby Shower
                                     </option>
 
+                                    <option value="Baby Shoot">
+                                        Baby Shoot
+                                    </option>
+
                                     <option value="Engagement">
                                         Engagement
                                     </option>

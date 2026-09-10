@@ -168,7 +168,7 @@ function Contact() {
                                 </strong>
 
                                 <p>
-                                    mahacreative@gmail.com
+                                    mahacreative05@gmail.com
                                 </p>
                             </div>
 
@@ -185,7 +185,7 @@ function Contact() {
                                 </strong>
 
                                 <p>
-                                    Aundipatty,Theni,Tamil Nadu
+                                    Divya Paradise(opp),<br />12th Ward,Srinivasanagar,<br />Aundipatty,Theni,<br />Tamil Nadu,625512
                                 </p>
                             </div>
 

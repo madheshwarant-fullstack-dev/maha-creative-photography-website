@@ -5,6 +5,9 @@ function Gallery() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Selected photo for popup
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
+
   // Get gallery from backend
   const fetchGallery = async () => {
     try {
@@ -31,6 +34,20 @@ function Gallery() {
   useEffect(() => {
     fetchGallery();
   }, []);
+
+  // Get image URL
+  const getImageUrl = (image) => {
+    if (!image) return "";
+
+    if (
+      image.startsWith("http://") ||
+      image.startsWith("https://")
+    ) {
+      return image;
+    }
+
+    return `http://localhost:5000${image}`;
+  };
 
   return (
     <div className="gallery-page">
@@ -94,11 +111,7 @@ function Gallery() {
                 <div className="gallery-card">
 
                   <img
-                    src={
-                      photo.image.startsWith("http")
-                        ? photo.image
-                        : `http://localhost:5000${photo.image}`
-                    }
+                    src={getImageUrl(photo.image)}
                     alt={photo.title}
                     className="img-fluid w-100"
                     style={{
@@ -111,7 +124,13 @@ function Gallery() {
 
                     <h4>{photo.title}</h4>
 
-                    <button className="btn btn-light">
+                    <button
+                      type="button"
+                      className="btn btn-light"
+                      onClick={() =>
+                        setSelectedPhoto(photo)
+                      }
+                    >
                       View Photo
                     </button>
 
@@ -125,6 +144,88 @@ function Gallery() {
         )}
 
       </section>
+
+      {/* ================= PHOTO MODAL ================= */}
+
+      {selectedPhoto && (
+        <div
+          onClick={() => setSelectedPhoto(null)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.85)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+            padding: "30px",
+          }}
+        >
+
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: "relative",
+              maxWidth: "1000px",
+              width: "100%",
+              textAlign: "center",
+            }}
+          >
+
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={() => setSelectedPhoto(null)}
+              style={{
+                position: "absolute",
+                top: "-15px",
+                right: "-15px",
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                border: "none",
+                backgroundColor: "#fff",
+                color: "#000",
+                fontSize: "24px",
+                fontWeight: "bold",
+                cursor: "pointer",
+                zIndex: 2,
+              }}
+            >
+              ×
+            </button>
+
+            {/* Full Image */}
+            <img
+              src={getImageUrl(selectedPhoto.image)}
+              alt={selectedPhoto.title}
+              style={{
+                maxWidth: "100%",
+                maxHeight: "80vh",
+                objectFit: "contain",
+                borderRadius: "10px",
+                display: "block",
+                margin: "0 auto",
+              }}
+            />
+
+            {/* Photo Title */}
+            <h4
+              style={{
+                color: "#fff",
+                marginTop: "15px",
+              }}
+            >
+              {selectedPhoto.title}
+            </h4>
+
+          </div>
+
+        </div>
+      )}
 
     </div>
   );
