@@ -238,6 +238,10 @@ function Login() {
 
                                 <a href="/signup">
                                     Sign Up
+                                </a> <br />
+
+                                 <a href="/admin/login">
+                                    Admin
                                 </a>
 
                             </p>

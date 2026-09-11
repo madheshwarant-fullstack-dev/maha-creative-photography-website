@@ -211,7 +211,7 @@ function Navbar() {
                                     data-bs-toggle="dropdown"
                                     aria-expanded="false"
                                 >
-                                    👤{" "}
+                                    <i class="bi bi-person-fill"></i>{" "}
                                     {user.name}
                                 </button>
 
@@ -224,7 +224,7 @@ function Navbar() {
                                             className="dropdown-item"
                                             to="/profile"
                                         >
-                                            👤 My Profile
+                                            <i class="bi bi-person-fill"></i> My Profile
                                         </Link>
                                     </li>
 
@@ -235,7 +235,7 @@ function Navbar() {
                                             className="dropdown-item"
                                             to="/my-bookings"
                                         >
-                                            📸 My Bookings
+                                            <i class="bi bi-camera-fill"></i> My Bookings
                                         </Link>
                                     </li>
 
@@ -252,7 +252,7 @@ function Navbar() {
                                                 handleLogout
                                             }
                                         >
-                                            🚪 Logout
+                                            <i class="bi bi-door-open-fill"></i> Logout
                                         </button>
                                     </li>
 

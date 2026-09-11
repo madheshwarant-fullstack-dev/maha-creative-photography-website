@@ -143,7 +143,7 @@ function Contact() {
 
                         <div className="contact-item">
 
-                            📞
+                            <i class="bi bi-telephone-fill"></i>
 
                             <div>
                                 <strong>
@@ -160,7 +160,7 @@ function Contact() {
 
                         <div className="contact-item">
 
-                            📧
+                            <i class="bi bi-envelope-at-fill"></i>
 
                             <div>
                                 <strong>
@@ -177,7 +177,7 @@ function Contact() {
 
                         <div className="contact-item">
 
-                            📍
+                            <i class="bi bi-geo-alt-fill"></i>
 
                             <div>
                                 <strong>
