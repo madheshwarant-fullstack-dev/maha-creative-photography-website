@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import "./Dashboard.css";
 
 const API_URL = "http://localhost:5000";
 
@@ -110,7 +111,6 @@ function Dashboard() {
                         booking.status === "Cancelled"
                 ).length,
             });
-
         } catch (error) {
             console.error(
                 "Dashboard data fetch error:",
@@ -149,25 +149,25 @@ function Dashboard() {
     // ================= RENDER =================
 
     return (
-        <div className="container py-5">
+        <div className="container py-5 admin-dashboard">
 
             {/* ================= HEADER ================= */}
 
-            <div className="d-flex justify-content-between align-items-center mb-5">
+            <div className="d-flex justify-content-between align-items-center mb-5 dashboard-header">
 
                 <div>
-                    <h1 className="fw-bold">
+                    <h1 className="fw-bold dashboard-title">
                         Admin Dashboard
                     </h1>
 
-                    <p className="text-muted mb-0">
+                    <p className="text-muted mb-0 dashboard-welcome">
                         Welcome back,{" "}
                         {user?.name || "Admin"}
                     </p>
                 </div>
 
                 <button
-                    className="btn btn-outline-danger"
+                    className="btn btn-outline-danger logout-btn"
                     onClick={handleLogout}
                 >
                     Logout
@@ -191,19 +191,19 @@ function Dashboard() {
 
                 <div className="col-md-6 col-lg-3">
 
-                    <div className="card shadow-sm border-0 h-100">
+                    <div className="card shadow-sm border-0 h-100 stats-card">
 
                         <div className="card-body p-4">
 
-                            <div className="d-flex justify-content-between">
+                            <div className="d-flex justify-content-between align-items-center">
 
                                 <div>
 
-                                    <p className="text-muted mb-1">
+                                    <p className="text-muted mb-1 stats-label">
                                         Total Bookings
                                     </p>
 
-                                    <h2 className="fw-bold mb-0">
+                                    <h2 className="fw-bold mb-0 stats-number">
                                         {loading
                                             ? "..."
                                             : stats.bookings}
@@ -211,12 +211,8 @@ function Dashboard() {
 
                                 </div>
 
-                                <span
-                                    style={{
-                                        fontSize: "32px",
-                                    }}
-                                >
-                                    📅
+                                <span className="stats-icon">
+                                    <i class="bi bi-calendar-day-fill"></i>
                                 </span>
 
                             </div>
@@ -231,19 +227,19 @@ function Dashboard() {
 
                 <div className="col-md-6 col-lg-3">
 
-                    <div className="card shadow-sm border-0 h-100">
+                    <div className="card shadow-sm border-0 h-100 stats-card">
 
                         <div className="card-body p-4">
 
-                            <div className="d-flex justify-content-between">
+                            <div className="d-flex justify-content-between align-items-center">
 
                                 <div>
 
-                                    <p className="text-muted mb-1">
+                                    <p className="text-muted mb-1 stats-label">
                                         Pending
                                     </p>
 
-                                    <h2 className="fw-bold mb-0">
+                                    <h2 className="fw-bold mb-0 stats-number">
                                         {loading
                                             ? "..."
                                             : stats.pending}
@@ -251,11 +247,7 @@ function Dashboard() {
 
                                 </div>
 
-                                <span
-                                    style={{
-                                        fontSize: "32px",
-                                    }}
-                                >
+                                <span className="stats-icon">
                                     ⏳
                                 </span>
 
@@ -271,19 +263,19 @@ function Dashboard() {
 
                 <div className="col-md-6 col-lg-3">
 
-                    <div className="card shadow-sm border-0 h-100">
+                    <div className="card shadow-sm border-0 h-100 stats-card">
 
                         <div className="card-body p-4">
 
-                            <div className="d-flex justify-content-between">
+                            <div className="d-flex justify-content-between align-items-center">
 
                                 <div>
 
-                                    <p className="text-muted mb-1">
+                                    <p className="text-muted mb-1 stats-label">
                                         Confirmed
                                     </p>
 
-                                    <h2 className="fw-bold mb-0">
+                                    <h2 className="fw-bold mb-0 stats-number">
                                         {loading
                                             ? "..."
                                             : stats.confirmed}
@@ -291,12 +283,8 @@ function Dashboard() {
 
                                 </div>
 
-                                <span
-                                    style={{
-                                        fontSize: "32px",
-                                    }}
-                                >
-                                    ✅
+                                <span className="stats-icon">
+                                    <i class="bi bi-check2"></i>
                                 </span>
 
                             </div>
@@ -311,19 +299,19 @@ function Dashboard() {
 
                 <div className="col-md-6 col-lg-3">
 
-                    <div className="card shadow-sm border-0 h-100">
+                    <div className="card shadow-sm border-0 h-100 stats-card">
 
                         <div className="card-body p-4">
 
-                            <div className="d-flex justify-content-between">
+                            <div className="d-flex justify-content-between align-items-center">
 
                                 <div>
 
-                                    <p className="text-muted mb-1">
+                                    <p className="text-muted mb-1 stats-label">
                                         Completed
                                     </p>
 
-                                    <h2 className="fw-bold mb-0">
+                                    <h2 className="fw-bold mb-0 stats-number">
                                         {loading
                                             ? "..."
                                             : stats.completed}
@@ -331,11 +319,7 @@ function Dashboard() {
 
                                 </div>
 
-                                <span
-                                    style={{
-                                        fontSize: "32px",
-                                    }}
-                                >
+                                <span className="stats-icon">
                                     🎉
                                 </span>
 
@@ -357,21 +341,21 @@ function Dashboard() {
 
                 <div className="col-md-4">
 
-                    <div className="card shadow-sm border-0 h-100">
+                    <div className="card shadow-sm border-0 h-100 management-card">
 
                         <div className="card-body p-4">
 
-                            <h5 className="fw-bold">
-                                👥 Users
+                            <h5 className="fw-bold management-title">
+                                <i class="bi bi-people-fill"></i> Users
                             </h5>
 
-                            <p className="text-muted">
+                            <p className="text-muted management-description">
                                 Manage registered users.
                             </p>
 
                             <Link
                                 to="/admin/users"
-                                className="btn btn-dark"
+                                className="btn btn-dark management-btn"
                             >
                                 Manage Users
                             </Link>
@@ -386,26 +370,26 @@ function Dashboard() {
 
                 <div className="col-md-4">
 
-                    <div className="card shadow-sm border-0 h-100">
+                    <div className="card shadow-sm border-0 h-100 management-card">
 
                         <div className="card-body p-4">
 
-                            <h5 className="fw-bold">
-                                📅 Bookings
+                            <h5 className="fw-bold management-title">
+                                <i class="bi bi-calendar-day-fill"></i> Bookings
                             </h5>
 
-                            <p className="text-muted">
+                            <p className="text-muted management-description">
                                 View and manage client bookings.
                             </p>
 
-                            <div className="mb-3">
+                            <div className="booking-badges">
 
-                                <span className="badge bg-warning text-dark me-2">
+                                <span className="badge bg-warning text-dark me-2 booking-badge">
                                     Pending:{" "}
                                     {stats.pending}
                                 </span>
 
-                                <span className="badge bg-primary">
+                                <span className="badge bg-primary booking-badge">
                                     Confirmed:{" "}
                                     {stats.confirmed}
                                 </span>
@@ -414,7 +398,7 @@ function Dashboard() {
 
                             <Link
                                 to="/admin/bookings"
-                                className="btn btn-dark"
+                                className="btn btn-dark management-btn"
                             >
                                 Manage Bookings
                             </Link>
@@ -429,19 +413,19 @@ function Dashboard() {
 
                 <div className="col-md-4">
 
-                    <div className="card shadow-sm border-0 h-100">
+                    <div className="card shadow-sm border-0 h-100 management-card">
 
                         <div className="card-body p-4">
 
-                            <h5 className="fw-bold">
+                            <h5 className="fw-bold management-title">
                                 🖼️ Gallery
                             </h5>
 
-                            <p className="text-muted">
+                            <p className="text-muted management-description">
                                 Add and manage gallery photos.
                             </p>
 
-                            <h4 className="fw-bold mb-3">
+                            <h4 className="fw-bold item-count">
                                 {loading
                                     ? "..."
                                     : stats.gallery}{" "}
@@ -450,7 +434,7 @@ function Dashboard() {
 
                             <Link
                                 to="/admin/gallery"
-                                className="btn btn-dark"
+                                className="btn btn-dark management-btn"
                             >
                                 Manage Gallery
                             </Link>
@@ -465,19 +449,19 @@ function Dashboard() {
 
                 <div className="col-md-4">
 
-                    <div className="card shadow-sm border-0 h-100">
+                    <div className="card shadow-sm border-0 h-100 management-card">
 
                         <div className="card-body p-4">
 
-                            <h5 className="fw-bold">
+                            <h5 className="fw-bold management-title">
                                 📦 Packages
                             </h5>
 
-                            <p className="text-muted">
+                            <p className="text-muted management-description">
                                 Manage photography packages.
                             </p>
 
-                            <h4 className="fw-bold mb-3">
+                            <h4 className="fw-bold item-count">
                                 {loading
                                     ? "..."
                                     : stats.packages}{" "}
@@ -486,7 +470,7 @@ function Dashboard() {
 
                             <Link
                                 to="/admin/packages"
-                                className="btn btn-dark"
+                                className="btn btn-dark management-btn"
                             >
                                 Manage Packages
                             </Link>
@@ -501,21 +485,21 @@ function Dashboard() {
 
                 <div className="col-md-4">
 
-                    <div className="card shadow-sm border-0 h-100">
+                    <div className="card shadow-sm border-0 h-100 management-card">
 
                         <div className="card-body p-4">
 
-                            <h5 className="fw-bold">
-                                💬 Messages
+                            <h5 className="fw-bold management-title">
+                                <i class="bi bi-chat-dots"></i> Messages
                             </h5>
 
-                            <p className="text-muted">
+                            <p className="text-muted management-description">
                                 View client messages and enquiries.
                             </p>
 
                             <Link
                                 to="/admin/messages"
-                                className="btn btn-dark"
+                                className="btn btn-dark management-btn"
                             >
                                 View Messages
                             </Link>
@@ -530,19 +514,19 @@ function Dashboard() {
 
                 <div className="col-md-4">
 
-                    <div className="card shadow-sm border-0 h-100">
+                    <div className="card shadow-sm border-0 h-100 management-card">
 
                         <div className="card-body p-4">
 
-                            <h5 className="fw-bold">
-                                ❌ Cancelled Bookings
+                            <h5 className="fw-bold management-title">
+                                <i class="bi bi-x-lg"></i> Cancelled Bookings
                             </h5>
 
-                            <p className="text-muted">
+                            <p className="text-muted management-description">
                                 Bookings cancelled by clients or admin.
                             </p>
 
-                            <h4 className="fw-bold mb-3">
+                            <h4 className="fw-bold item-count">
                                 {loading
                                     ? "..."
                                     : stats.cancelled}
@@ -550,7 +534,7 @@ function Dashboard() {
 
                             <Link
                                 to="/admin/bookings"
-                                className="btn btn-outline-danger"
+                                className="btn btn-outline-danger cancelled-btn"
                             >
                                 View Bookings
                             </Link>
