@@ -248,7 +248,7 @@ function Dashboard() {
                                 </div>
 
                                 <span className="stats-icon">
-                                    ⏳
+                                    <i class="bi bi-hourglass-split"></i>
                                 </span>
 
                             </div>
@@ -320,7 +320,7 @@ function Dashboard() {
                                 </div>
 
                                 <span className="stats-icon">
-                                    🎉
+                                    <i className="bi bi-check-circle-fill"></i>
                                 </span>
 
                             </div>
@@ -418,7 +418,7 @@ function Dashboard() {
                         <div className="card-body p-4">
 
                             <h5 className="fw-bold management-title">
-                                🖼️ Gallery
+                                <i class="bi bi-image"></i> Gallery
                             </h5>
 
                             <p className="text-muted management-description">
@@ -454,7 +454,7 @@ function Dashboard() {
                         <div className="card-body p-4">
 
                             <h5 className="fw-bold management-title">
-                                📦 Packages
+                                <i class="bi bi-box2-fill"></i> Packages
                             </h5>
 
                             <p className="text-muted management-description">
