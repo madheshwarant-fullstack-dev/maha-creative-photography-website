@@ -1,11 +1,7 @@
 /* =========================================================
    MAHA CREATIVE PHOTOGRAPHY
-   ADMIN DASHBOARD - FINAL DESIGN
-========================================================= */
-
-
-/* =========================================================
-   FULL PAGE BACKGROUND
+   ADMIN DASHBOARD
+   LIGHT PINK THEME
 ========================================================= */
 
 html,
@@ -17,12 +13,12 @@ body,
 }
 
 body {
-    background: #0b0b0b;
+    background: #fff5f8;
 }
 
 
 /* =========================================================
-   DASHBOARD MAIN CONTAINER
+   MAIN DASHBOARD
 ========================================================= */
 
 .admin-dashboard {
@@ -39,20 +35,20 @@ body {
 
     background:
         radial-gradient(
-            circle at top right,
-            rgba(111, 66, 193, 0.16),
-            transparent 35%
+            circle at top left,
+            rgba(255, 192, 213, 0.45),
+            transparent 32%
         ),
         radial-gradient(
-            circle at bottom left,
-            rgba(111, 66, 193, 0.10),
+            circle at bottom right,
+            rgba(255, 210, 225, 0.40),
             transparent 35%
         ),
         linear-gradient(
             135deg,
-            #090909 0%,
-            #15111c 50%,
-            #090909 100%
+            #fff5f8 0%,
+            #ffeef4 50%,
+            #fff7fa 100%
         );
 
     font-family: "Poppins", sans-serif;
@@ -68,9 +64,6 @@ body {
     margin-bottom: 45px !important;
 }
 
-
-/* Dashboard title */
-
 .admin-dashboard .dashboard-title {
     margin: 0;
 
@@ -79,18 +72,15 @@ body {
 
     font-weight: 700;
 
-    color: #ffffff;
+    color: #3a2029;
 
     letter-spacing: -0.7px;
 }
 
-
-/* Welcome text */
-
 .admin-dashboard .dashboard-welcome {
     margin-top: 9px;
 
-    color: #a7a7a7 !important;
+    color: #8d6874 !important;
 
     font-size: 15px;
 }
@@ -103,34 +93,32 @@ body {
 .admin-dashboard .logout-btn {
     padding: 11px 25px;
 
-    border: 1px solid #dc3545;
+    border: 1px solid #e58aa5;
 
-    border-radius: 8px;
+    border-radius: 9px;
 
-    background: transparent;
+    background: #ffffff;
 
-    color: #ff5262;
+    color: #d65b7d;
 
     font-size: 14px;
 
     font-weight: 600;
 
-    transition:
-        background 0.3s ease,
-        color 0.3s ease,
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .admin-dashboard .logout-btn:hover {
-    background: #dc3545;
+    background: #d95f83;
+
+    border-color: #d95f83;
 
     color: #ffffff;
 
     transform: translateY(-2px);
 
     box-shadow:
-        0 8px 20px rgba(220, 53, 69, 0.25);
+        0 8px 20px rgba(217, 95, 131, 0.22);
 }
 
 
@@ -146,12 +134,12 @@ body {
     margin-bottom: 30px;
 
     box-shadow:
-        0 5px 20px rgba(0, 0, 0, 0.2);
+        0 5px 18px rgba(180, 80, 110, 0.08);
 }
 
 
 /* =========================================================
-   STATISTICS SECTION
+   STATISTICS CARDS
 ========================================================= */
 
 .admin-dashboard .stats-card {
@@ -161,22 +149,20 @@ body {
 
     border: none !important;
 
-    border-radius: 15px !important;
+    border-radius: 17px !important;
 
     background: #ffffff;
 
     overflow: hidden;
 
     box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.28) !important;
+        0 7px 25px rgba(190, 90, 120, 0.10) !important;
 
-    transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 
-/* Purple left border */
+/* Pink side line */
 
 .admin-dashboard .stats-card::before {
     content: "";
@@ -191,8 +177,8 @@ body {
 
     background: linear-gradient(
         180deg,
-        #9b6cff,
-        #6f42c1
+        #ff9fba,
+        #df6388
     );
 }
 
@@ -200,19 +186,21 @@ body {
 /* Hover */
 
 .admin-dashboard .stats-card:hover {
-    transform: translateY(-7px);
+    transform: translateY(-6px);
 
     box-shadow:
-        0 16px 35px rgba(0, 0, 0, 0.40) !important;
+        0 14px 32px rgba(190, 90, 120, 0.16) !important;
 }
 
 
-/* Statistics label */
+/* =========================================================
+   STATISTICS LABEL
+========================================================= */
 
 .admin-dashboard .stats-label {
     margin: 0;
 
-    color: #777777 !important;
+    color: #8a7780 !important;
 
     font-size: 14px;
 
@@ -220,14 +208,16 @@ body {
 }
 
 
-/* Statistics number */
+/* =========================================================
+   STATISTICS NUMBER
+========================================================= */
 
 .admin-dashboard .stats-number {
     margin-top: 6px;
 
     margin-bottom: 0;
 
-    color: #111111;
+    color: #3a2029;
 
     font-size: 32px;
 
@@ -245,7 +235,7 @@ body {
     width: 58px;
     height: 58px;
 
-    border-radius: 15px;
+    border-radius: 16px;
 
     display: flex;
 
@@ -254,15 +244,13 @@ body {
 
     background: linear-gradient(
         135deg,
-        #eee0ff,
-        #dfc8ff
+        #ffe1ea,
+        #ffd0dd
     );
 
     font-size: 28px !important;
 
-    transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 
@@ -272,7 +260,7 @@ body {
     transform: scale(1.08) rotate(3deg);
 
     box-shadow:
-        0 6px 15px rgba(111, 66, 193, 0.18);
+        0 6px 16px rgba(220, 100, 135, 0.15);
 }
 
 
@@ -285,28 +273,26 @@ body {
 
     border: none !important;
 
-    border-radius: 15px !important;
+    border-radius: 17px !important;
 
     background: #ffffff;
 
     overflow: hidden;
 
     box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.28) !important;
+        0 7px 25px rgba(190, 90, 120, 0.10) !important;
 
-    transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 
-/* Management hover */
+/* Hover */
 
 .admin-dashboard .management-card:hover {
-    transform: translateY(-7px);
+    transform: translateY(-6px);
 
     box-shadow:
-        0 16px 35px rgba(0, 0, 0, 0.40) !important;
+        0 14px 32px rgba(190, 90, 120, 0.16) !important;
 }
 
 
@@ -319,7 +305,7 @@ body {
 
     margin-bottom: 10px;
 
-    color: #151515;
+    color: #3a2029;
 
     font-size: 20px;
 
@@ -330,7 +316,7 @@ body {
 
 
 /* =========================================================
-   MANAGEMENT DESCRIPTION
+   DESCRIPTION
 ========================================================= */
 
 .admin-dashboard .management-description {
@@ -338,7 +324,7 @@ body {
 
     margin-bottom: 18px;
 
-    color: #777777 !important;
+    color: #8a7780 !important;
 
     font-size: 14px;
 
@@ -353,11 +339,11 @@ body {
 .admin-dashboard .management-btn {
     padding: 10px 18px;
 
-    border: 1px solid #111111;
+    border: 1px solid #d95f83;
 
     border-radius: 8px;
 
-    background: #111111;
+    background: #d95f83;
 
     color: #ffffff;
 
@@ -365,27 +351,23 @@ body {
 
     font-weight: 600;
 
-    transition:
-        background 0.3s ease,
-        border-color 0.3s ease,
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 
-/* Button hover */
+/* Hover */
 
 .admin-dashboard .management-btn:hover {
-    border-color: #6f42c1;
+    border-color: #c94f73;
 
-    background: #6f42c1;
+    background: #c94f73;
 
     color: #ffffff;
 
     transform: translateY(-2px);
 
     box-shadow:
-        0 7px 18px rgba(111, 66, 193, 0.30);
+        0 7px 18px rgba(217, 95, 131, 0.25);
 }
 
 
@@ -396,7 +378,7 @@ body {
 .admin-dashboard .item-count {
     margin-bottom: 15px;
 
-    color: #111111;
+    color: #3a2029;
 
     font-size: 24px;
 
@@ -414,13 +396,10 @@ body {
     margin-bottom: 18px;
 }
 
-
-/* Badge */
-
 .admin-dashboard .booking-badge {
     padding: 6px 11px;
 
-    border-radius: 6px;
+    border-radius: 7px;
 
     font-size: 12px;
 
@@ -429,7 +408,7 @@ body {
 
 
 /* =========================================================
-   CANCELLED BOOKING BUTTON
+   CANCELLED BUTTON
 ========================================================= */
 
 .admin-dashboard .cancelled-btn {
@@ -441,19 +420,14 @@ body {
 
     font-weight: 600;
 
-    transition:
-        background 0.3s ease,
-        color 0.3s ease,
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
+    transition: all 0.3s ease;
 }
-
 
 .admin-dashboard .cancelled-btn:hover {
     transform: translateY(-2px);
 
     box-shadow:
-        0 7px 18px rgba(220, 53, 69, 0.22);
+        0 7px 18px rgba(220, 80, 100, 0.15);
 }
 
 
@@ -469,7 +443,7 @@ body {
 
 
 /* =========================================================
-   BOOTSTRAP ROW SPACING
+   ROW SPACING
 ========================================================= */
 
 .admin-dashboard .row {
@@ -479,7 +453,7 @@ body {
 
 
 /* =========================================================
-   STATISTICS ROW
+   STATISTICS BOTTOM SPACE
 ========================================================= */
 
 .admin-dashboard .row.g-4.mb-5 {
@@ -488,21 +462,20 @@ body {
 
 
 /* =========================================================
-   RESPONSIVE - LARGE DESKTOP
+   LARGE DESKTOP
 ========================================================= */
 
 @media (min-width: 1400px) {
 
     .admin-dashboard {
-        padding-left: 7%;
-        padding-right: 7%;
+        padding-left: 7% !important;
+        padding-right: 7% !important;
     }
-
 }
 
 
 /* =========================================================
-   RESPONSIVE - TABLET
+   TABLET
 ========================================================= */
 
 @media (max-width: 991px) {
@@ -522,12 +495,11 @@ body {
     .admin-dashboard .management-card {
         min-height: 200px;
     }
-
 }
 
 
 /* =========================================================
-   RESPONSIVE - MOBILE
+   MOBILE
 ========================================================= */
 
 @media (max-width: 767px) {
@@ -535,9 +507,6 @@ body {
     .admin-dashboard {
         padding: 25px 18px 45px 18px !important;
     }
-
-
-    /* Header */
 
     .admin-dashboard .dashboard-header {
         display: flex;
@@ -551,41 +520,25 @@ body {
         margin-bottom: 35px !important;
     }
 
-
-    /* Title */
-
     .admin-dashboard .dashboard-title {
         font-size: 28px;
-
-        letter-spacing: -0.4px;
     }
-
-
-    /* Welcome */
 
     .admin-dashboard .dashboard-welcome {
         font-size: 14px;
     }
 
-
-    /* Logout */
-
     .admin-dashboard .logout-btn {
         width: 100%;
     }
-
-
-    /* Statistics */
 
     .admin-dashboard .stats-card {
         min-height: 125px;
     }
 
-
     .admin-dashboard .stats-number {
         font-size: 27px;
     }
-
 
     .admin-dashboard .stats-icon {
         width: 52px;
@@ -594,23 +547,18 @@ body {
         font-size: 25px !important;
     }
 
-
-    /* Management */
-
     .admin-dashboard .management-card {
         min-height: auto;
     }
 
-
     .admin-dashboard .management-title {
         font-size: 19px;
     }
-
 }
 
 
 /* =========================================================
-   RESPONSIVE - SMALL MOBILE
+   SMALL MOBILE
 ========================================================= */
 
 @media (max-width: 480px) {
@@ -620,36 +568,30 @@ body {
         padding-right: 14px !important;
     }
 
-
     .admin-dashboard .dashboard-title {
         font-size: 25px;
     }
-
 
     .admin-dashboard .stats-number {
         font-size: 25px;
     }
 
-
     .admin-dashboard .management-title {
         font-size: 18px;
     }
-
 
     .admin-dashboard .management-description {
         font-size: 13px;
     }
 
-
     .admin-dashboard .card-body {
         padding: 22px !important;
     }
-
 }
 
 
 /* =========================================================
-   SMOOTH RENDERING
+   SMOOTH ANIMATION
 ========================================================= */
 
 .admin-dashboard .card,
