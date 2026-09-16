@@ -66,7 +66,7 @@ function Dashboard() {
             if (!bookingsResponse.ok) {
                 throw new Error(
                     bookingsData.message ||
-                        "Failed to fetch bookings"
+                    "Failed to fetch bookings"
                 );
             }
 
@@ -212,7 +212,7 @@ function Dashboard() {
                                 </div>
 
                                 <span className="stats-icon">
-                                    <i class="bi bi-calendar-day-fill"></i>
+                                    <i className="bi bi-calendar-day-fill"></i>
                                 </span>
 
                             </div>
@@ -248,7 +248,7 @@ function Dashboard() {
                                 </div>
 
                                 <span className="stats-icon">
-                                    <i class="bi bi-hourglass-split"></i>
+                                    <i className="bi bi-hourglass-split"></i>
                                 </span>
 
                             </div>
@@ -284,7 +284,7 @@ function Dashboard() {
                                 </div>
 
                                 <span className="stats-icon">
-                                    <i class="bi bi-check2"></i>
+                                    <i className="bi bi-check2"></i>
                                 </span>
 
                             </div>
@@ -346,7 +346,8 @@ function Dashboard() {
                         <div className="card-body p-4">
 
                             <h5 className="fw-bold management-title">
-                                <i class="bi bi-people-fill"></i> Users
+                                <i className="bi bi-people-fill"></i>{" "}
+                                Users
                             </h5>
 
                             <p className="text-muted management-description">
@@ -375,7 +376,8 @@ function Dashboard() {
                         <div className="card-body p-4">
 
                             <h5 className="fw-bold management-title">
-                                <i class="bi bi-calendar-day-fill"></i> Bookings
+                                <i className="bi bi-calendar-day-fill"></i>{" "}
+                                Bookings
                             </h5>
 
                             <p className="text-muted management-description">
@@ -418,7 +420,8 @@ function Dashboard() {
                         <div className="card-body p-4">
 
                             <h5 className="fw-bold management-title">
-                                <i class="bi bi-image"></i> Gallery
+                                <i className="bi bi-image"></i>{" "}
+                                Gallery
                             </h5>
 
                             <p className="text-muted management-description">
@@ -454,7 +457,8 @@ function Dashboard() {
                         <div className="card-body p-4">
 
                             <h5 className="fw-bold management-title">
-                                <i class="bi bi-box2-fill"></i> Packages
+                                <i className="bi bi-box2-fill"></i>{" "}
+                                Packages
                             </h5>
 
                             <p className="text-muted management-description">
@@ -490,7 +494,8 @@ function Dashboard() {
                         <div className="card-body p-4">
 
                             <h5 className="fw-bold management-title">
-                                <i class="bi bi-chat-dots"></i> Messages
+                                <i className="bi bi-chat-dots"></i>{" "}
+                                Messages
                             </h5>
 
                             <p className="text-muted management-description">
@@ -519,7 +524,8 @@ function Dashboard() {
                         <div className="card-body p-4">
 
                             <h5 className="fw-bold management-title">
-                                <i class="bi bi-x-lg"></i> Cancelled Bookings
+                                <i className="bi bi-x-lg"></i>{" "}
+                                Cancelled Bookings
                             </h5>
 
                             <p className="text-muted management-description">
