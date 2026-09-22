@@ -275,6 +275,15 @@ function Booking() {
     return (
         <section className="py-5">
             <div className="container">
+                  {/* Back Button */}
+            <button
+                    type="button"
+                    className="btn btn-outline-dark mb-4"
+                    onClick={() => navigate(-1)}
+            >
+            <i className="bi bi-arrow-left me-2"></i>
+                Back
+            </button>
 
                 {/* ================= HEADING ================= */}
 
@@ -546,12 +555,12 @@ function Booking() {
                                                 Pre Wedding
                                             </option>
 
-                                            <option value="Maternity">
-                                                Maternity
+                                            <option value="Baby Shoot">
+                                                Baby Shoot
                                             </option>
 
-                                            <option value="Corporate">
-                                                Corporate
+                                            <option value="Puberty ceremony">
+                                                Puberty ceremony
                                             </option>
 
                                             <option value="Other">

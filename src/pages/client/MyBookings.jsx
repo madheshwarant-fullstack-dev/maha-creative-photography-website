@@ -96,7 +96,7 @@ function MyBookings() {
 
             default:
                 return {
-                    icon: "⏳",
+                    icon: <i className="bi bi-hourglass-split"></i>,
                     className: "bg-warning text-dark",
                     textClass: "text-warning",
                 };
@@ -206,7 +206,7 @@ function MyBookings() {
                                     fontSize: "60px",
                                 }}
                             >
-                                📸
+                                <i className="bi bi-camera-fill"></i>
                             </span>
                         </div>
 
