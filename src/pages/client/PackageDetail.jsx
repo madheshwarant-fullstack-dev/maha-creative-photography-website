@@ -160,7 +160,7 @@ function PackageDetail() {
                         navigate("/packages")
                     }
                 >
-                    ← Back to Packages
+                    ← Back
                 </button>
 
                 <div className="row g-5 align-items-start">
