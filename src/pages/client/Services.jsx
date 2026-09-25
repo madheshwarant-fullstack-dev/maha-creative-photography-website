@@ -1,7 +1,10 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "../../assets/css/Services.css";
 
 function Services() {
+  const navigate = useNavigate();
+
   const services = [
     {
       image: "/images/gallery/Wedding2.jpeg",
@@ -47,8 +50,8 @@ function Services() {
     },
   ];
 
-  const handleBooking = (service) => {
-    alert(`Booking selected for ${service}`);
+  const handleBooking = () => {
+    navigate("/packages");
   };
 
   return (
@@ -97,9 +100,7 @@ function Services() {
 
                   <button
                     className="book-btn"
-                    onClick={() =>
-                      handleBooking(service.title)
-                    }
+                    onClick={handleBooking}
                   >
                     Book Now
                   </button>

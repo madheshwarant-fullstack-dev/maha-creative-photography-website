@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     BrowserRouter,
     Routes,
     Route,
+    useLocation,
 } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
@@ -36,10 +37,26 @@ import GalleryManagement from "./pages/admin/GalleryManagement";
 import PackageManagement from "./pages/admin/PackageManagement";
 import Messages from "./pages/admin/Messages";
 
+// ================= SCROLL TO TOP =================
+
+function ScrollToTop() {
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
+
+    return null;
+}
+
+// ================= APP =================
 
 function App() {
     return (
         <BrowserRouter>
+
+            {/* Scroll page to top whenever route changes */}
+            <ScrollToTop />
 
             <Routes>
 
@@ -143,7 +160,6 @@ function App() {
                     element={<Signup />}
                 />
 
-
                 {/* ================= CLIENT PROTECTED ================= */}
 
                 <Route element={<ClientProtectedRoute />}>
@@ -172,14 +188,12 @@ function App() {
 
                 </Route>
 
-
                 {/* ================= ADMIN LOGIN ================= */}
 
                 <Route
                     path="/admin/login"
                     element={<AdminLogin />}
                 />
-
 
                 {/* ================= ADMIN PROTECTED ================= */}
 
