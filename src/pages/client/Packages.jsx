@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://localhost:5000";
+const API_URL =
+    import.meta.env.VITE_API_URL ||
+    "http://localhost:5000";
 
 function PackageImage({ image, alt }) {
     const [loaded, setLoaded] = useState(false);
@@ -206,13 +208,11 @@ function Packages() {
                                         <div
                                             className="placeholder-glow"
                                         >
-                                            <span className="placeholder col-8"></span>
-                                            <br />
+                                            <span className="placeholder col-7"></span>
                                             <span className="placeholder col-5"></span>
-                                            <br />
-                                            <span className="placeholder col-10"></span>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         ))}
@@ -226,12 +226,19 @@ function Packages() {
                     </div>
                 )}
 
-                {/* EMPTY */}
+                {/* NO PACKAGES */}
                 {!loading &&
                     !error &&
                     packages.length === 0 && (
-                        <div className="alert alert-info text-center">
-                            No packages available.
+                        <div className="text-center py-5">
+                            <h5>
+                                No packages available
+                            </h5>
+
+                            <p className="text-muted">
+                                Photography packages will
+                                appear here.
+                            </p>
                         </div>
                     )}
 
@@ -246,12 +253,7 @@ function Packages() {
                                     className="col-md-6 col-lg-4"
                                     key={pkg._id}
                                 >
-                                    <div
-                                        className="card h-100 shadow-sm border-0"
-                                        style={{
-                                            overflow: "hidden",
-                                        }}
-                                    >
+                                    <div className="card h-100 shadow-sm border-0">
 
                                         {/* IMAGE */}
                                         <PackageImage
@@ -259,68 +261,59 @@ function Packages() {
                                             alt={pkg.name}
                                         />
 
-                                        {/* CONTENT */}
+                                        {/* BODY */}
                                         <div className="card-body p-4">
 
-                                            <span className="badge bg-dark mb-2">
+                                            <span className="badge bg-secondary mb-2">
                                                 {pkg.category}
                                             </span>
 
-                                            <h4 className="fw-bold mb-2">
+                                            <h4 className="fw-bold">
                                                 {pkg.name}
                                             </h4>
 
-                                            <h3 className="fw-bold mb-2">
+                                            <h3 className="fw-bold">
                                                 ₹
                                                 {formatPrice(
                                                     pkg.price
                                                 )}
                                             </h3>
 
-                                            <p className="text-muted mb-3">
-                                                <strong>
-                                                    Delivery:
-                                                </strong>{" "}
-                                                {pkg.delivery}
-                                            </p>
+                                            {pkg.delivery && (
+                                                <p className="text-muted mb-2">
+                                                    <i className="bi bi-clock me-2"></i>
+                                                    {pkg.delivery}
+                                                </p>
+                                            )}
 
                                             {pkg.description && (
                                                 <p className="text-muted">
-                                                    {
-                                                        pkg.description
-                                                    }
+                                                    {pkg.description}
                                                 </p>
                                             )}
 
                                             {pkg.highlights &&
                                                 pkg.highlights
-                                                    .length >
-                                                    0 && (
-                                                    <ul className="ps-3 mb-0">
-                                                        {pkg.highlights
-                                                            .slice(
-                                                                0,
-                                                                5
+                                                    .length > 0 && (
+                                                    <ul className="small ps-3">
+                                                        {pkg.highlights.map(
+                                                            (
+                                                                item,
+                                                                index
+                                                            ) => (
+                                                                <li
+                                                                    key={
+                                                                        index
+                                                                    }
+                                                                    className="mb-1"
+                                                                >
+                                                                    {item}
+                                                                </li>
                                                             )
-                                                            .map(
-                                                                (
-                                                                    item,
-                                                                    index
-                                                                ) => (
-                                                                    <li
-                                                                        key={
-                                                                            index
-                                                                        }
-                                                                        className="mb-1"
-                                                                    >
-                                                                        {
-                                                                            item
-                                                                        }
-                                                                    </li>
-                                                                )
-                                                            )}
+                                                        )}
                                                     </ul>
                                                 )}
+
                                         </div>
 
                                         {/* BUTTON */}
@@ -338,6 +331,7 @@ function Packages() {
                                             </button>
 
                                         </div>
+
                                     </div>
                                 </div>
                             ))}

@@ -1,261 +1,231 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:5000";
 
 function Login() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
-        email: "",
-        password: "",
-    });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    const [message, setMessage] = useState("");
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-    // ================= INPUT CHANGE =================
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-    };
+    setError("");
 
-    // ================= LOGIN SUBMIT =================
+    if (!email || !password) {
+      setError("Please enter email and password");
+      return;
+    }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    try {
+      setLoading(true);
 
-        setMessage("");
-        setError("");
-        setLoading(true);
-
-        try {
-            const response = await fetch(
-                "http://localhost:5000/api/auth/login",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email: formData.email,
-                        password: formData.password,
-                    }),
-                }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(
-                    data.message || "Login failed"
-                );
-            }
-
-            // ================= BLOCK ADMIN FROM CLIENT LOGIN =================
-
-            if (
-                data.user &&
-                data.user.role === "admin"
-            ) {
-                setError(
-                    "Admin account cannot login here. Please use Admin Login."
-                );
-
-                // Make sure admin credentials are NOT stored
-                localStorage.removeItem("token");
-                localStorage.removeItem("user");
-
-                setLoading(false);
-                return;
-            }
-
-            // ================= SAVE CLIENT LOGIN =================
-
-            if (data.token) {
-                localStorage.setItem(
-                    "token",
-                    data.token
-                );
-            }
-
-            if (data.user) {
-                localStorage.setItem(
-                    "user",
-                    JSON.stringify(data.user)
-                );
-            }
-
-            setMessage("Login successful!");
-
-            // ================= GO TO PROFILE =================
-
-            setTimeout(() => {
-                navigate("/profile");
-            }, 1000);
-
-        } catch (error) {
-            console.error(
-                "Login error:",
-                error
-            );
-
-            setError(
-                error.message ||
-                    "Login failed"
-            );
-        } finally {
-            setLoading(false);
+      const response = await fetch(
+        `${API_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
         }
-    };
+      );
 
-    return (
-        <section className="auth-section py-5">
+      const data = await response.json();
 
-            <div className="container">
+      if (!response.ok || !data.success) {
+        setError(
+          data.message || "Invalid email or password"
+        );
+        return;
+      }
 
-                <div className="row justify-content-center">
+      // Prevent admin from using client login
+      if (data.user && data.user.role === "admin") {
+        setError(
+          "Admin users must login through Admin Login"
+        );
+        return;
+      }
 
-                    <div className="col-md-6 col-lg-5">
+      // Save authentication data
+      localStorage.setItem("token", data.token);
+      localStorage.setItem(
+        "user",
+        JSON.stringify(data.user)
+      );
 
-                        <div className="auth-card">
+      // Go to home page
+      navigate("/");
+    } catch (error) {
+      console.error("Login error:", error);
 
-                            {/* ================= LOGO ================= */}
+      setError(
+        "Unable to connect to server. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                            <div className="text-center mb-4">
+  return (
+    <div className="login-page">
 
-                                <img
-                                    src="/images/Logo.png"
-                                    alt="Maha Creative Photography"
-                                    className="auth-logo"
-                                />
+      <div className="container py-5">
 
-                                <h2>
-                                    Client Login
-                                </h2>
+        <div className="row justify-content-center">
 
-                                <p className="text-muted">
-                                    Login to your account
-                                </p>
+          <div className="col-md-6 col-lg-5">
 
-                            </div>
+            <div className="card shadow border-0">
 
-                            {/* ================= SUCCESS MESSAGE ================= */}
+              <div className="card-body p-4 p-md-5">
 
-                            {message && (
-                                <div className="alert alert-success">
-                                    {message}
-                                </div>
-                            )}
+                {/* Heading */}
+                <div className="text-center mb-4">
 
-                            {/* ================= ERROR MESSAGE ================= */}
+                  <h2 className="fw-bold">
+                    Welcome Back
+                  </h2>
 
-                            {error && (
-                                <div className="alert alert-danger">
-                                    {error}
-                                </div>
-                            )}
-
-                            {/* ================= LOGIN FORM ================= */}
-
-                            <form
-                                onSubmit={
-                                    handleSubmit
-                                }
-                            >
-
-                                {/* EMAIL */}
-
-                                <div className="mb-3">
-
-                                    <label className="form-label">
-                                        Email
-                                    </label>
-
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        className="form-control"
-                                        placeholder="Enter your email"
-                                        value={
-                                            formData.email
-                                        }
-                                        onChange={
-                                            handleChange
-                                        }
-                                        required
-                                    />
-
-                                </div>
-
-                                {/* PASSWORD */}
-
-                                <div className="mb-3">
-
-                                    <label className="form-label">
-                                        Password
-                                    </label>
-
-                                    <input
-                                        type="password"
-                                        name="password"
-                                        className="form-control"
-                                        placeholder="Enter your password"
-                                        value={
-                                            formData.password
-                                        }
-                                        onChange={
-                                            handleChange
-                                        }
-                                        required
-                                    />
-
-                                </div>
-
-                                {/* LOGIN BUTTON */}
-
-                                <button
-                                    type="submit"
-                                    className="btn btn-pink w-100"
-                                    disabled={
-                                        loading
-                                    }
-                                >
-                                    {loading
-                                        ? "Logging in..."
-                                        : "Login"}
-                                </button>
-
-                            </form>
-
-                            {/* ================= SIGNUP ================= */}
-
-                            <p className="text-center mt-4">
-
-                                Don't have an account?{" "}
-
-                                <a href="/signup">
-                                    Sign Up
-                                </a> <br />
-
-                                 <a href="/admin/login">
-                                    Admin
-                                </a>
-
-                            </p>
-
-                        </div>
-
-                    </div>
+                  <p className="text-muted">
+                    Login to Maha Creative Photography
+                  </p>
 
                 </div>
 
+                {/* Error */}
+                {error && (
+                  <div
+                    className="alert alert-danger"
+                    role="alert"
+                  >
+                    {error}
+                  </div>
+                )}
+
+                {/* Login Form */}
+                <form onSubmit={handleLogin}>
+
+                  {/* Email */}
+                  <div className="mb-3">
+
+                    <label
+                      htmlFor="email"
+                      className="form-label fw-semibold"
+                    >
+                      Email Address
+                    </label>
+
+                    <input
+                      type="email"
+                      id="email"
+                      className="form-control"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) =>
+                        setEmail(e.target.value)
+                      }
+                      required
+                    />
+
+                  </div>
+
+                  {/* Password */}
+                  <div className="mb-3">
+
+                    <label
+                      htmlFor="password"
+                      className="form-label fw-semibold"
+                    >
+                      Password
+                    </label>
+
+                    <input
+                      type="password"
+                      id="password"
+                      className="form-control"
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) =>
+                        setPassword(e.target.value)
+                      }
+                      required
+                    />
+
+                  </div>
+
+                  {/* Login Button */}
+                  <button
+                    type="submit"
+                    className="btn btn-dark w-100 mt-2"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                        Logging in...
+                      </>
+                    ) : (
+                      "Login"
+                    )}
+                  </button>
+
+                </form>
+
+                {/* Signup */}
+                <div className="text-center mt-4">
+
+                  <p className="mb-0">
+                    Don't have an account?{" "}
+                    <Link
+                      to="/signup"
+                      className="text-decoration-none fw-semibold"
+                    >
+                      Signup
+                    </Link>
+                  </p>
+
+                </div>
+
+                {/* Admin Login */}
+                <div className="text-center mt-3">
+
+                  <Link
+                    to="/admin/login"
+                    className="text-decoration-none"
+                  >
+                    Admin Login
+                  </Link>
+
+                </div>
+
+              </div>
+
             </div>
 
-        </section>
-    );
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  );
 }
 
 export default Login;

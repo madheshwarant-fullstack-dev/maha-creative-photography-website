@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://localhost:5000";
+const API_URL =
+    import.meta.env.VITE_API_URL ||
+    "http://localhost:5000";
 
 function Profile() {
     const navigate = useNavigate();
@@ -17,8 +19,7 @@ function Profile() {
             setLoading(true);
             setError("");
 
-            const token =
-                localStorage.getItem("token");
+            const token = localStorage.getItem("token");
 
             if (!token) {
                 navigate("/login");
@@ -34,19 +35,12 @@ function Profile() {
                 }
             );
 
-            const data =
-                await response.json();
+            const data = await response.json();
 
             if (!response.ok) {
-                if (
-                    response.status === 401
-                ) {
-                    localStorage.removeItem(
-                        "token"
-                    );
-                    localStorage.removeItem(
-                        "user"
-                    );
+                if (response.status === 401) {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("user");
 
                     navigate("/login");
                     return;
@@ -61,7 +55,7 @@ function Profile() {
             if (data.success) {
                 setUser(data.user);
 
-                // Keep localStorage updated
+                // Keep localStorage user data updated
                 localStorage.setItem(
                     "user",
                     JSON.stringify(data.user)
@@ -79,7 +73,8 @@ function Profile() {
             );
 
             setError(
-                "Unable to load profile"
+                error.message ||
+                    "Unable to connect to server"
             );
         } finally {
             setLoading(false);
@@ -138,12 +133,14 @@ function Profile() {
                     </div>
 
                     <div className="text-center">
+
                         <button
                             className="btn btn-dark"
                             onClick={fetchProfile}
                         >
                             Try Again
                         </button>
+
                     </div>
 
                 </div>
@@ -158,22 +155,17 @@ function Profile() {
             <section className="py-5">
                 <div className="container text-center">
 
-                    <h2>
-                        Please Login
-                    </h2>
-
-                    <p className="text-muted">
-                        You need to login to view
-                        your profile.
-                    </p>
+                    <h4>
+                        Profile not found
+                    </h4>
 
                     <button
-                        className="btn btn-pink"
+                        className="btn btn-dark mt-3"
                         onClick={() =>
                             navigate("/login")
                         }
                     >
-                        Go to Login
+                        Login
                     </button>
 
                 </div>
@@ -181,118 +173,168 @@ function Profile() {
         );
     }
 
-    // ================= PROFILE UI =================
+    // ================= PROFILE =================
 
     return (
-        <section className="profile-section py-5">
-
+        <section className="py-5">
             <div className="container">
+
+                {/* ================= HEADING ================= */}
+
+                <div className="text-center mb-5">
+
+                    <h2 className="fw-bold">
+                        My Profile
+                    </h2>
+
+                    <p className="text-muted">
+                        View your Maha Creative
+                        Photography account details
+                    </p>
+
+                </div>
+
+                {/* ================= PROFILE CARD ================= */}
 
                 <div className="row justify-content-center">
 
                     <div className="col-md-8 col-lg-6">
 
-                        <div className="auth-card">
+                        <div className="card border-0 shadow-sm">
 
-                            {/* Profile Header */}
+                            <div className="card-body p-4 p-md-5">
 
-                            <div className="text-center mb-4">
+                                {/* PROFILE ICON */}
 
-                                <img
-                                    src="/images/Logo.png"
-                                    alt="Maha Creative Photography"
-                                    className="auth-logo"
-                                />
+                                <div className="text-center mb-4">
 
-                                <h2>
-                                    My Profile
-                                </h2>
+                                    <div
+                                        className="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center mx-auto"
+                                        style={{
+                                            width: "90px",
+                                            height: "90px",
+                                            fontSize: "36px",
+                                        }}
+                                    >
+                                        <i className="bi bi-person-fill"></i>
+                                    </div>
 
-                                <p className="text-muted">
-                                    Welcome to Maha Creative Photography
-                                </p>
+                                    <h4 className="fw-bold mt-3 mb-1">
+                                        {user.name}
+                                    </h4>
 
-                            </div>
+                                    <span
+                                        className={`badge ${
+                                            user.role ===
+                                            "admin"
+                                                ? "bg-danger"
+                                                : "bg-primary"
+                                        }`}
+                                    >
+                                        {user.role ===
+                                        "admin"
+                                            ? "Admin"
+                                            : "Client"}
+                                    </span>
 
+                                </div>
 
-                            {/* User Details */}
+                                <hr />
 
-                            <div className="profile-details">
-
-                                {/* Name */}
+                                {/* ================= NAME ================= */}
 
                                 <div className="mb-3">
 
-                                    <label className="form-label">
+                                    <label className="form-label text-muted small">
                                         Full Name
                                     </label>
 
-                                    <div className="form-control">
-                                        {user.name}
+                                    <div className="form-control bg-light">
+                                        <i className="bi bi-person me-2"></i>
+                                        {user.name || "-"}
                                     </div>
 
                                 </div>
 
-
-                                {/* Email */}
+                                {/* ================= EMAIL ================= */}
 
                                 <div className="mb-3">
 
-                                    <label className="form-label">
-                                        Email
+                                    <label className="form-label text-muted small">
+                                        Email Address
                                     </label>
 
-                                    <div className="form-control">
-                                        {user.email}
+                                    <div className="form-control bg-light">
+                                        <i className="bi bi-envelope me-2"></i>
+                                        {user.email || "-"}
                                     </div>
 
                                 </div>
 
-
-                                {/* Phone */}
+                                {/* ================= PHONE ================= */}
 
                                 <div className="mb-3">
 
-                                    <label className="form-label">
-                                        Phone
+                                    <label className="form-label text-muted small">
+                                        Phone Number
                                     </label>
 
-                                    <div className="form-control">
-                                        {user.phone ||
-                                            "Not provided"}
+                                    <div className="form-control bg-light">
+                                        <i className="bi bi-telephone me-2"></i>
+                                        {user.phone || "-"}
                                     </div>
 
                                 </div>
 
-
-                                {/* Account Type */}
+                                {/* ================= ROLE ================= */}
 
                                 <div className="mb-4">
 
-                                    <label className="form-label">
+                                    <label className="form-label text-muted small">
                                         Account Type
                                     </label>
 
-                                    <div className="form-control text-capitalize">
-                                        {user.role ||
-                                            "user"}
+                                    <div className="form-control bg-light">
+                                        <i className="bi bi-shield-check me-2"></i>
+                                        {user.role ===
+                                        "admin"
+                                            ? "Administrator"
+                                            : "Client"}
                                     </div>
+
+                                </div>
+
+                                {/* ================= ACTIONS ================= */}
+
+                                <div className="d-grid gap-2">
+
+                                    <button
+                                        type="button"
+                                        className="btn btn-dark"
+                                        onClick={() =>
+                                            navigate(
+                                                "/my-bookings"
+                                            )
+                                        }
+                                    >
+                                        <i className="bi bi-camera me-2"></i>
+                                        My Bookings
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline-danger"
+                                        onClick={
+                                            handleLogout
+                                        }
+                                    >
+                                        <i className="bi bi-box-arrow-right me-2"></i>
+                                        Logout
+                                    </button>
 
                                 </div>
 
                             </div>
-
-
-                            {/* Logout */}
-
-                            <button
-                                className="btn btn-pink w-100"
-                                onClick={
-                                    handleLogout
-                                }
-                            >
-                                Logout
-                            </button>
 
                         </div>
 
@@ -301,7 +343,6 @@ function Profile() {
                 </div>
 
             </div>
-
         </section>
     );
 }

@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:5000";
+
 function Gallery() {
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,7 +18,7 @@ function Gallery() {
       setLoading(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/gallery"
+        `${API_URL}/api/gallery`
       );
 
       const data = await response.json();
@@ -46,7 +50,7 @@ function Gallery() {
       return image;
     }
 
-    return `http://localhost:5000${image}`;
+    return `${API_URL}${image}`;
   };
 
   return (

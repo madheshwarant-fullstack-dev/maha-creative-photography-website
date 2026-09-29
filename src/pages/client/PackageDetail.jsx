@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-    useNavigate,
-    useParams,
-} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const API_URL = "http://localhost:5000";
+const API_URL =
+    import.meta.env.VITE_API_URL ||
+    "http://localhost:5000";
 
 function PackageDetail() {
     const { packageId } = useParams();
@@ -12,34 +11,34 @@ function PackageDetail() {
 
     const [pkg, setPkg] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [imageLoaded, setImageLoaded] = useState(false);
-    const [imageError, setImageError] = useState(false);
     const [error, setError] = useState("");
 
-    const getImageUrl = (imagePath) => {
-        if (!imagePath) return "";
+    // ================= IMAGE URL =================
+
+    const getImageUrl = (image) => {
+        if (!image) return "";
 
         if (
-            imagePath.startsWith("http://") ||
-            imagePath.startsWith("https://")
+            image.startsWith("http://") ||
+            image.startsWith("https://")
         ) {
-            return imagePath;
+            return image;
         }
 
-        if (imagePath.startsWith("/")) {
-            return `${API_URL}${imagePath}`;
+        if (image.startsWith("/")) {
+            return `${API_URL}${image}`;
         }
 
-        return `${API_URL}/${imagePath}`;
+        return `${API_URL}/${image}`;
     };
+
+    // ================= FETCH PACKAGE =================
 
     useEffect(() => {
         const fetchPackage = async () => {
             try {
                 setLoading(true);
                 setError("");
-                setImageLoaded(false);
-                setImageError(false);
 
                 const response = await fetch(
                     `${API_URL}/api/packages/${packageId}`
@@ -50,7 +49,7 @@ function PackageDetail() {
                 if (!response.ok) {
                     throw new Error(
                         data.message ||
-                            "Package not found"
+                            "Failed to fetch package"
                     );
                 }
 
@@ -64,7 +63,7 @@ function PackageDetail() {
                 }
             } catch (error) {
                 console.error(
-                    "Fetch package error:",
+                    "Package detail error:",
                     error
                 );
 
@@ -77,47 +76,37 @@ function PackageDetail() {
             }
         };
 
-        fetchPackage();
+        if (packageId) {
+            fetchPackage();
+        }
     }, [packageId]);
 
-    const handleBooking = () => {
-        navigate(
-            `/booking?packageId=${pkg.packageId}`
-        );
-    };
-
-    const formatPrice = (price) => {
-        return Number(price || 0).toLocaleString(
-            "en-IN"
-        );
-    };
+    // ================= LOADING =================
 
     if (loading) {
         return (
             <section className="py-5">
-                <div className="container">
+                <div className="container text-center">
 
                     <div
-                        className="text-center py-5"
+                        className="spinner-border"
+                        role="status"
                     >
-                        <div
-                            className="spinner-border"
-                            role="status"
-                        >
-                            <span className="visually-hidden">
-                                Loading...
-                            </span>
-                        </div>
-
-                        <p className="text-muted mt-3">
-                            Loading package...
-                        </p>
+                        <span className="visually-hidden">
+                            Loading...
+                        </span>
                     </div>
+
+                    <p className="text-muted mt-3">
+                        Loading package details...
+                    </p>
 
                 </div>
             </section>
         );
     }
+
+    // ================= ERROR =================
 
     if (error || !pkg) {
         return (
@@ -130,16 +119,17 @@ function PackageDetail() {
                     </div>
 
                     <div className="text-center">
+
                         <button
                             className="btn btn-dark"
                             onClick={() =>
-                                navigate(
-                                    "/packages"
-                                )
+                                navigate("/packages")
                             }
                         >
+                            <i className="bi bi-arrow-left me-2"></i>
                             Back to Packages
                         </button>
+
                     </div>
 
                 </div>
@@ -147,224 +137,208 @@ function PackageDetail() {
         );
     }
 
-    const imageUrl = getImageUrl(pkg.image);
+    // ================= RENDER =================
 
     return (
         <section className="py-5">
             <div className="container">
 
                 {/* BACK BUTTON */}
+
                 <button
+                    type="button"
                     className="btn btn-outline-dark mb-4"
-                    onClick={() =>
-                        navigate("/packages")
-                    }
+                    onClick={() => navigate(-1)}
                 >
-                    ← Back
+                    <i className="bi bi-arrow-left me-2"></i>
+                    Back
                 </button>
 
-                <div className="row g-5 align-items-start">
+                {/* PACKAGE CARD */}
 
-                    {/* IMAGE */}
-                    <div className="col-lg-6">
+                <div className="card shadow-sm border-0 overflow-hidden">
 
-                        <div
-                            style={{
-                                width: "100%",
-                                height: "420px",
-                                overflow: "hidden",
-                                borderRadius: "12px",
-                                backgroundColor:
-                                    "#f5f5f5",
-                                position: "relative",
-                            }}
-                        >
+                    <div className="row g-0">
 
-                            {/* IMAGE LOADING */}
-                            {!imageLoaded &&
-                                !imageError &&
-                                imageUrl && (
-                                    <div
-                                        style={{
-                                            position:
-                                                "absolute",
-                                            inset: 0,
-                                            display:
-                                                "flex",
-                                            alignItems:
-                                                "center",
-                                            justifyContent:
-                                                "center",
-                                            backgroundColor:
-                                                "#f5f5f5",
-                                            zIndex: 1,
-                                        }}
-                                    >
-                                        <div
-                                            className="spinner-border"
-                                            role="status"
-                                        >
-                                            <span className="visually-hidden">
-                                                Loading...
-                                            </span>
-                                        </div>
-                                    </div>
-                                )}
+                        {/* ================= IMAGE ================= */}
 
-                            {/* IMAGE */}
-                            {imageUrl &&
-                                !imageError && (
-                                    <img
-                                        src={imageUrl}
-                                        alt={pkg.name}
-                                        onLoad={() =>
-                                            setImageLoaded(
-                                                true
-                                            )
-                                        }
-                                        onError={() =>
-                                            setImageError(
-                                                true
-                                            )
-                                        }
-                                        style={{
-                                            width: "100%",
-                                            height: "420px",
-                                            objectFit:
-                                                "cover",
-                                            objectPosition:
-                                                "center",
-                                            display:
-                                                "block",
-                                            opacity:
-                                                imageLoaded
-                                                    ? 1
-                                                    : 0,
-                                            transition:
-                                                "opacity 0.3s ease",
-                                        }}
-                                    />
-                                )}
+                        <div className="col-lg-6">
 
-                            {/* NO IMAGE */}
-                            {(!imageUrl ||
-                                imageError) && (
-                                <div
+                            {pkg.image ? (
+                                <img
+                                    src={getImageUrl(
+                                        pkg.image
+                                    )}
+                                    alt={pkg.name}
+                                    className="img-fluid w-100 h-100"
                                     style={{
-                                        width: "100%",
-                                        height: "420px",
-                                        display:
-                                            "flex",
-                                        alignItems:
-                                            "center",
-                                        justifyContent:
-                                            "center",
-                                        color: "#999",
+                                        minHeight:
+                                            "450px",
+                                        maxHeight:
+                                            "600px",
+                                        objectFit:
+                                            "cover",
+                                    }}
+                                />
+                            ) : (
+                                <div
+                                    className="d-flex align-items-center justify-content-center bg-light"
+                                    style={{
+                                        minHeight:
+                                            "450px",
                                     }}
                                 >
-                                    No Image Available
+                                    <div className="text-center text-muted">
+                                        <i
+                                            className="bi bi-camera"
+                                            style={{
+                                                fontSize:
+                                                    "60px",
+                                            }}
+                                        ></i>
+
+                                        <p className="mt-3">
+                                            No Image Available
+                                        </p>
+                                    </div>
                                 </div>
                             )}
 
                         </div>
 
-                    </div>
+                        {/* ================= DETAILS ================= */}
 
-                    {/* DETAILS */}
-                    <div className="col-lg-6">
+                        <div className="col-lg-6">
 
-                        <span className="badge bg-dark mb-3">
-                            {pkg.category}
-                        </span>
+                            <div className="card-body p-4 p-lg-5">
 
-                        <h1 className="fw-bold mb-3">
-                            {pkg.name}
-                        </h1>
+                                {/* CATEGORY */}
 
-                        <h2 className="fw-bold mb-3">
-                            ₹
-                            {formatPrice(
-                                pkg.price
-                            )}
-                        </h2>
+                                {pkg.category && (
+                                    <span className="badge bg-secondary mb-3">
+                                        {pkg.category}
+                                    </span>
+                                )}
 
-                        <p className="text-muted mb-4">
-                            <strong>
-                                Album Delivery:
-                            </strong>{" "}
-                            {pkg.delivery}
-                        </p>
+                                {/* NAME */}
 
-                        {pkg.description && (
-                            <div className="mb-4">
-                                <h5 className="fw-bold">
-                                    About This Package
-                                </h5>
+                                <h1 className="fw-bold mb-3">
+                                    {pkg.name}
+                                </h1>
 
-                                <p className="text-muted">
-                                    {
-                                        pkg.description
-                                    }
-                                </p>
-                            </div>
-                        )}
+                                {/* DESCRIPTION */}
 
-                        {/* HIGHLIGHTS */}
-                        {pkg.highlights &&
-                            pkg.highlights.length >
-                                0 && (
+                                {pkg.description && (
+                                    <p className="text-muted mb-4">
+                                        {pkg.description}
+                                    </p>
+                                )}
+
+                                {/* PRICE */}
+
                                 <div className="mb-4">
 
-                                    <h5 className="fw-bold mb-3">
-                                        Package Includes
-                                    </h5>
+                                    <small className="text-muted d-block">
+                                        Package Price
+                                    </small>
 
-                                    <ul className="list-group">
-                                        {pkg.highlights.map(
-                                            (
-                                                item,
-                                                index
-                                            ) => (
-                                                <li
-                                                    key={
-                                                        index
-                                                    }
-                                                    className="list-group-item"
-                                                >
-                                                    ✓{" "}
-                                                    {
-                                                        item
-                                                    }
-                                                </li>
-                                            )
+                                    <h2 className="fw-bold mb-0">
+                                        ₹
+                                        {Number(
+                                            pkg.price || 0
+                                        ).toLocaleString(
+                                            "en-IN"
                                         )}
-                                    </ul>
+                                    </h2>
 
                                 </div>
-                            )}
 
-                        {/* BUTTONS */}
-                        <div className="d-flex gap-3 flex-wrap">
+                                {/* DELIVERY */}
 
-                            <button
-                                className="btn btn-dark px-4 py-2"
-                                onClick={
-                                    handleBooking
-                                }
-                            >
-                                Book This Package
-                            </button>
+                                {pkg.delivery && (
+                                    <div className="d-flex align-items-center mb-4">
 
-                            <button
-                                className="btn btn-outline-dark px-4 py-2"
-                                onClick={() =>
-                                    navigate(
-                                        "/packages"
-                                    )
-                                }
-                            >
-                                View All Packages
-                            </button>
+                                        <i className="bi bi-clock-fill me-2"></i>
+
+                                        <div>
+                                            <small className="text-muted d-block">
+                                                Album Delivery
+                                            </small>
+
+                                            <strong>
+                                                {pkg.delivery}
+                                            </strong>
+                                        </div>
+
+                                    </div>
+                                )}
+
+                                {/* HIGHLIGHTS */}
+
+                                {pkg.highlights &&
+                                    pkg.highlights.length >
+                                        0 && (
+                                        <div className="mb-4">
+
+                                            <h5 className="fw-bold mb-3">
+                                                Package Includes
+                                            </h5>
+
+                                            <ul className="list-group list-group-flush">
+
+                                                {pkg.highlights.map(
+                                                    (
+                                                        item,
+                                                        index
+                                                    ) => (
+                                                        <li
+                                                            key={
+                                                                index
+                                                            }
+                                                            className="list-group-item px-0"
+                                                        >
+                                                            <i className="bi bi-check-circle-fill text-success me-2"></i>
+
+                                                            {item}
+                                                        </li>
+                                                    )
+                                                )}
+
+                                            </ul>
+
+                                        </div>
+                                    )}
+
+                                {/* BOOKING BUTTON */}
+
+                                <button
+                                    type="button"
+                                    className="btn btn-dark btn-lg w-100 mb-3"
+                                    onClick={() =>
+                                        navigate(
+                                            `/booking?packageId=${pkg.packageId}`
+                                        )
+                                    }
+                                >
+                                    <i className="bi bi-calendar-check me-2"></i>
+                                    Book This Package
+                                </button>
+
+                                {/* BACK TO PACKAGES */}
+
+                                <button
+                                    type="button"
+                                    className="btn btn-outline-dark w-100"
+                                    onClick={() =>
+                                        navigate(
+                                            "/packages"
+                                        )
+                                    }
+                                >
+                                    View All Packages
+                                </button>
+
+                            </div>
 
                         </div>
 

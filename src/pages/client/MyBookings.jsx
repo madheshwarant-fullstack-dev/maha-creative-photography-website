@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://localhost:5000";
+const API_URL =
+    import.meta.env.VITE_API_URL ||
+    "http://localhost:5000";
 
 function MyBookings() {
     const navigate = useNavigate();
@@ -96,7 +98,9 @@ function MyBookings() {
 
             default:
                 return {
-                    icon: <i className="bi bi-hourglass-split"></i>,
+                    icon: (
+                        <i className="bi bi-hourglass-split"></i>
+                    ),
                     className: "bg-warning text-dark",
                     textClass: "text-warning",
                 };
