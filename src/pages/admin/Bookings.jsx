@@ -195,10 +195,10 @@ function Bookings() {
 
             {/* ================= HEADER ================= */}
 
-            <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
 
                 <div>
-                    <h1 className="fw-bold">
+                    <h1 className="fw-bold mb-2">
                         Bookings
                     </h1>
 
@@ -211,6 +211,7 @@ function Bookings() {
                     className="btn btn-dark"
                     onClick={fetchBookings}
                 >
+                    <i className="bi bi-arrow-clockwise me-2"></i>
                     Refresh
                 </button>
 
@@ -227,13 +228,13 @@ function Bookings() {
             {/* ================= BOOKING COUNTS ================= */}
 
             {!loading && !error && (
-                <div className="mb-3">
+                <div className="mb-3 d-flex flex-wrap gap-2">
 
-                    <span className="badge bg-dark me-2">
+                    <span className="badge bg-dark">
                         {bookings.length} Bookings
                     </span>
 
-                    <span className="badge bg-warning text-dark me-2">
+                    <span className="badge bg-warning text-dark">
                         {
                             bookings.filter(
                                 (item) =>
@@ -243,7 +244,7 @@ function Bookings() {
                         Pending
                     </span>
 
-                    <span className="badge bg-primary me-2">
+                    <span className="badge bg-primary">
                         {
                             bookings.filter(
                                 (item) =>
@@ -253,7 +254,7 @@ function Bookings() {
                         Confirmed
                     </span>
 
-                    <span className="badge bg-success me-2">
+                    <span className="badge bg-success">
                         {
                             bookings.filter(
                                 (item) =>
@@ -313,152 +314,305 @@ function Bookings() {
 
                     ) : (
 
-                        /* ================= TABLE ================= */
+                        <>
 
-                        <div className="table-responsive">
+                            {/* ================================================= */}
+                            {/* DESKTOP TABLE */}
+                            {/* ================================================= */}
 
-                            <table className="table table-hover align-middle">
+                            <div className="d-none d-md-block">
 
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Client</th>
-                                        <th>Contact</th>
-                                        <th>Event</th>
-                                        <th>Package</th>
-                                        <th>Date</th>
-                                        <th>Location</th>
-                                        <th>Message</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
+                                <div className="table-responsive">
 
-                                <tbody>
+                                    <table className="table table-hover align-middle mb-0">
+
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Client</th>
+                                                <th>Contact</th>
+                                                <th>Event</th>
+                                                <th>Package</th>
+                                                <th>Date</th>
+                                                <th>Location</th>
+                                                <th>Message</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+
+                                            {bookings.map(
+                                                (booking, index) => (
+
+                                                    <tr
+                                                        key={
+                                                            booking._id
+                                                        }
+                                                    >
+
+                                                        {/* Number */}
+
+                                                        <td>
+                                                            {index + 1}
+                                                        </td>
+
+                                                        {/* Client */}
+
+                                                        <td>
+                                                            <strong>
+                                                                {
+                                                                    booking.name
+                                                                }
+                                                            </strong>
+
+                                                            <br />
+
+                                                            <small className="text-muted">
+                                                                {
+                                                                    booking.email
+                                                                }
+                                                            </small>
+                                                        </td>
+
+                                                        {/* Contact */}
+
+                                                        <td>
+                                                            {
+                                                                booking.phone
+                                                            }
+                                                        </td>
+
+                                                        {/* Event */}
+
+                                                        <td>
+                                                            <strong>
+                                                                {
+                                                                    booking.eventType
+                                                                }
+                                                            </strong>
+                                                        </td>
+
+                                                        {/* Package */}
+
+                                                        <td>
+
+                                                            {booking.packageName ? (
+                                                                <>
+                                                                    <strong>
+                                                                        {
+                                                                            booking.packageName
+                                                                        }
+                                                                    </strong>
+
+                                                                    {booking.packagePrice >
+                                                                        0 && (
+                                                                        <>
+                                                                            <br />
+
+                                                                            <small className="text-muted">
+                                                                                ₹
+                                                                                {Number(
+                                                                                    booking.packagePrice
+                                                                                ).toLocaleString(
+                                                                                    "en-IN"
+                                                                                )}
+                                                                            </small>
+                                                                        </>
+                                                                    )}
+                                                                </>
+                                                            ) : (
+                                                                <span className="text-muted">
+                                                                    No Package
+                                                                </span>
+                                                            )}
+
+                                                        </td>
+
+                                                        {/* Date */}
+
+                                                        <td>
+                                                            {formatDate(
+                                                                booking.eventDate
+                                                            )}
+                                                        </td>
+
+                                                        {/* Location */}
+
+                                                        <td>
+                                                            {
+                                                                booking.location
+                                                            }
+                                                        </td>
+
+                                                        {/* Message */}
+
+                                                        <td
+                                                            style={{
+                                                                minWidth:
+                                                                    "220px",
+                                                                maxWidth:
+                                                                    "300px",
+                                                            }}
+                                                        >
+                                                            {booking.message ? (
+                                                                booking.message
+                                                            ) : (
+                                                                <span className="text-muted">
+                                                                    -
+                                                                </span>
+                                                            )}
+                                                        </td>
+
+                                                        {/* Status */}
+
+                                                        <td>
+
+                                                            <span
+                                                                className={`badge ${getStatusBadge(
+                                                                    booking.status
+                                                                )}`}
+                                                            >
+                                                                {
+                                                                    booking.status
+                                                                }
+                                                            </span>
+
+                                                        </td>
+
+                                                        {/* Action */}
+
+                                                        <td>
+
+                                                            <div
+                                                                className="d-flex flex-column gap-2"
+                                                                style={{
+                                                                    minWidth:
+                                                                        "130px",
+                                                                }}
+                                                            >
+
+                                                                <select
+                                                                    className="form-select form-select-sm"
+                                                                    value={
+                                                                        booking.status
+                                                                    }
+                                                                    onChange={(
+                                                                        e
+                                                                    ) =>
+                                                                        updateStatus(
+                                                                            booking._id,
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <option value="Pending">
+                                                                        Pending
+                                                                    </option>
+
+                                                                    <option value="Confirmed">
+                                                                        Confirmed
+                                                                    </option>
+
+                                                                    <option value="Completed">
+                                                                        Completed
+                                                                    </option>
+
+                                                                    <option value="Cancelled">
+                                                                        Cancelled
+                                                                    </option>
+                                                                </select>
+
+                                                                <button
+                                                                    className="btn btn-outline-danger btn-sm"
+                                                                    onClick={() =>
+                                                                        deleteBooking(
+                                                                            booking._id
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Delete
+                                                                </button>
+
+                                                            </div>
+
+                                                        </td>
+
+                                                    </tr>
+
+                                                )
+                                            )}
+
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+
+                            {/* ================================================= */}
+                            {/* MOBILE CARD LAYOUT */}
+                            {/* ================================================= */}
+
+                            <div className="d-md-none">
+
+                                <div className="d-flex flex-column gap-3">
 
                                     {bookings.map(
                                         (booking, index) => (
 
-                                            <tr
-                                                key={
-                                                    booking._id
-                                                }
+                                            <div
+                                                key={booking._id}
+                                                className="border rounded-3 p-3 shadow-sm"
                                             >
 
-                                                {/* Number */}
+                                                {/* Booking Header */}
 
-                                                <td>
-                                                    {index + 1}
-                                                </td>
+                                                <div className="d-flex justify-content-between align-items-start gap-2 mb-3">
 
-                                                {/* Client */}
+                                                    <div>
 
-                                                <td>
-                                                    <strong>
-                                                        {
-                                                            booking.name
-                                                        }
-                                                    </strong>
+                                                        <div className="d-flex align-items-center gap-2">
 
-                                                    <br />
+                                                            <div
+                                                                className="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center"
+                                                                style={{
+                                                                    width: "40px",
+                                                                    height: "40px",
+                                                                    minWidth: "40px",
+                                                                }}
+                                                            >
+                                                                {index + 1}
+                                                            </div>
 
-                                                    <small className="text-muted">
-                                                        {
-                                                            booking.email
-                                                        }
-                                                    </small>
-                                                </td>
+                                                            <div>
 
-                                                {/* Contact */}
+                                                                <div
+                                                                    className="fw-bold"
+                                                                    style={{
+                                                                        overflowWrap:
+                                                                            "anywhere",
+                                                                    }}
+                                                                >
+                                                                    {
+                                                                        booking.name
+                                                                    }
+                                                                </div>
 
-                                                <td>
-                                                    {
-                                                        booking.phone
-                                                    }
-                                                </td>
+                                                                <small className="text-muted">
+                                                                    Booking #{index + 1}
+                                                                </small>
 
-                                                {/* Event */}
+                                                            </div>
 
-                                                <td>
-                                                    <strong>
-                                                        {
-                                                            booking.eventType
-                                                        }
-                                                    </strong>
-                                                </td>
+                                                        </div>
 
-                                                {/* Package */}
-
-                                                <td>
-                                                    {booking.packageName ? (
-                                                        <>
-                                                            <strong>
-                                                                {
-                                                                    booking.packageName
-                                                                }
-                                                            </strong>
-
-                                                            {booking.packagePrice >
-                                                                0 && (
-                                                                <>
-                                                                    <br />
-
-                                                                    <small className="text-muted">
-                                                                        ₹
-                                                                        {Number(
-                                                                            booking.packagePrice
-                                                                        ).toLocaleString(
-                                                                            "en-IN"
-                                                                        )}
-                                                                    </small>
-                                                                </>
-                                                            )}
-                                                        </>
-                                                    ) : (
-                                                        <span className="text-muted">
-                                                            No Package
-                                                        </span>
-                                                    )}
-                                                </td>
-
-                                                {/* Date */}
-
-                                                <td>
-                                                    {formatDate(
-                                                        booking.eventDate
-                                                    )}
-                                                </td>
-
-                                                {/* Location */}
-
-                                                <td>
-                                                    {
-                                                        booking.location
-                                                    }
-                                                </td>
-
-                                                {/* Message */}
-
-                                                <td
-                                                    style={{
-                                                        minWidth:
-                                                            "220px",
-                                                        maxWidth:
-                                                            "300px",
-                                                    }}
-                                                >
-                                                    {booking.message ? (
-                                                        booking.message
-                                                    ) : (
-                                                        <span className="text-muted">
-                                                            -
-                                                        </span>
-                                                    )}
-                                                </td>
-
-                                                {/* Status */}
-
-                                                <td>
+                                                    </div>
 
                                                     <span
                                                         className={`badge ${getStatusBadge(
@@ -470,80 +624,233 @@ function Bookings() {
                                                         }
                                                     </span>
 
-                                                </td>
+                                                </div>
 
-                                                {/* Action */}
 
-                                                <td>
+                                                {/* Email */}
+
+                                                <div className="mb-3">
+
+                                                    <small className="text-muted d-block">
+                                                        Email
+                                                    </small>
 
                                                     <div
-                                                        className="d-flex flex-column gap-2"
                                                         style={{
-                                                            minWidth:
-                                                                "130px",
+                                                            overflowWrap:
+                                                                "anywhere",
                                                         }}
                                                     >
-
-                                                        <select
-                                                            className="form-select form-select-sm"
-                                                            value={
-                                                                booking.status
-                                                            }
-                                                            onChange={(
-                                                                e
-                                                            ) =>
-                                                                updateStatus(
-                                                                    booking._id,
-                                                                    e
-                                                                        .target
-                                                                        .value
-                                                                )
-                                                            }
-                                                        >
-
-                                                            <option value="Pending">
-                                                                Pending
-                                                            </option>
-
-                                                            <option value="Confirmed">
-                                                                Confirmed
-                                                            </option>
-
-                                                            <option value="Completed">
-                                                                Completed
-                                                            </option>
-
-                                                            <option value="Cancelled">
-                                                                Cancelled
-                                                            </option>
-
-                                                        </select>
-
-                                                        <button
-                                                            className="btn btn-outline-danger btn-sm"
-                                                            onClick={() =>
-                                                                deleteBooking(
-                                                                    booking._id
-                                                                )
-                                                            }
-                                                        >
-                                                            Delete
-                                                        </button>
-
+                                                        {
+                                                            booking.email
+                                                        }
                                                     </div>
 
-                                                </td>
+                                                </div>
 
-                                            </tr>
+
+                                                {/* Phone */}
+
+                                                <div className="mb-3">
+
+                                                    <small className="text-muted d-block">
+                                                        Phone
+                                                    </small>
+
+                                                    <div>
+                                                        {
+                                                            booking.phone ||
+                                                            "Not provided"
+                                                        }
+                                                    </div>
+
+                                                </div>
+
+
+                                                {/* Event */}
+
+                                                <div className="mb-3">
+
+                                                    <small className="text-muted d-block">
+                                                        Event
+                                                    </small>
+
+                                                    <div className="fw-semibold">
+                                                        {
+                                                            booking.eventType
+                                                        }
+                                                    </div>
+
+                                                </div>
+
+
+                                                {/* Package */}
+
+                                                <div className="mb-3">
+
+                                                    <small className="text-muted d-block">
+                                                        Package
+                                                    </small>
+
+                                                    {booking.packageName ? (
+                                                        <div>
+
+                                                            <div className="fw-semibold">
+                                                                {
+                                                                    booking.packageName
+                                                                }
+                                                            </div>
+
+                                                            {booking.packagePrice >
+                                                                0 && (
+                                                                <small className="text-muted">
+                                                                    ₹
+                                                                    {Number(
+                                                                        booking.packagePrice
+                                                                    ).toLocaleString(
+                                                                        "en-IN"
+                                                                    )}
+                                                                </small>
+                                                            )}
+
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-muted">
+                                                            No Package
+                                                        </span>
+                                                    )}
+
+                                                </div>
+
+
+                                                {/* Date */}
+
+                                                <div className="mb-3">
+
+                                                    <small className="text-muted d-block">
+                                                        Event Date
+                                                    </small>
+
+                                                    <div>
+                                                        {formatDate(
+                                                            booking.eventDate
+                                                        )}
+                                                    </div>
+
+                                                </div>
+
+
+                                                {/* Location */}
+
+                                                <div className="mb-3">
+
+                                                    <small className="text-muted d-block">
+                                                        Location
+                                                    </small>
+
+                                                    <div
+                                                        style={{
+                                                            overflowWrap:
+                                                                "anywhere",
+                                                        }}
+                                                    >
+                                                        {
+                                                            booking.location ||
+                                                            "-"
+                                                        }
+                                                    </div>
+
+                                                </div>
+
+
+                                                {/* Message */}
+
+                                                <div className="mb-3">
+
+                                                    <small className="text-muted d-block">
+                                                        Message
+                                                    </small>
+
+                                                    <div
+                                                        className="bg-light rounded p-2"
+                                                        style={{
+                                                            overflowWrap:
+                                                                "anywhere",
+                                                        }}
+                                                    >
+                                                        {booking.message ? (
+                                                            booking.message
+                                                        ) : (
+                                                            <span className="text-muted">
+                                                                No message
+                                                            </span>
+                                                        )}
+                                                    </div>
+
+                                                </div>
+
+
+                                                {/* Actions */}
+
+                                                <div className="pt-3 border-top">
+
+                                                    <small className="text-muted d-block mb-2">
+                                                        Update Status
+                                                    </small>
+
+                                                    <select
+                                                        className="form-select mb-2"
+                                                        value={
+                                                            booking.status
+                                                        }
+                                                        onChange={(e) =>
+                                                            updateStatus(
+                                                                booking._id,
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    >
+                                                        <option value="Pending">
+                                                            Pending
+                                                        </option>
+
+                                                        <option value="Confirmed">
+                                                            Confirmed
+                                                        </option>
+
+                                                        <option value="Completed">
+                                                            Completed
+                                                        </option>
+
+                                                        <option value="Cancelled">
+                                                            Cancelled
+                                                        </option>
+                                                    </select>
+
+                                                    <button
+                                                        className="btn btn-outline-danger w-100"
+                                                        onClick={() =>
+                                                            deleteBooking(
+                                                                booking._id
+                                                            )
+                                                        }
+                                                    >
+                                                        <i className="bi bi-trash me-2"></i>
+                                                        Delete Booking
+                                                    </button>
+
+                                                </div>
+
+                                            </div>
 
                                         )
                                     )}
 
-                                </tbody>
+                                </div>
 
-                            </table>
+                            </div>
 
-                        </div>
+                        </>
 
                     )}
 

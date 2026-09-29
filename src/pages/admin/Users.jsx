@@ -125,10 +125,10 @@ function Users() {
 
             {/* ================= HEADER ================= */}
 
-            <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
 
                 <div>
-                    <h1 className="fw-bold">
+                    <h1 className="fw-bold mb-2">
                         Users
                     </h1>
 
@@ -144,7 +144,6 @@ function Users() {
                 >
                     Refresh
                 </button>
-
             </div>
 
             {/* ================= ERROR ================= */}
@@ -202,61 +201,178 @@ function Users() {
 
                     ) : (
 
-                        /* ================= TABLE ================= */
+                        <>
+                            {/* ================================================= */}
+                            {/* DESKTOP TABLE */}
+                            {/* ================================================= */}
 
-                        <div className="table-responsive">
+                            <div className="d-none d-md-block">
 
-                            <table className="table table-hover align-middle">
+                                <div className="table-responsive">
 
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
-                                        <th>Role</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
+                                    <table className="table table-hover align-middle mb-0">
 
-                                <tbody>
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Phone</th>
+                                                <th>Role</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+
+                                            {users.map(
+                                                (user, index) => (
+
+                                                    <tr
+                                                        key={user._id}
+                                                    >
+
+                                                        {/* Number */}
+
+                                                        <td>
+                                                            {index + 1}
+                                                        </td>
+
+                                                        {/* Name */}
+
+                                                        <td>
+                                                            <strong>
+                                                                {user.name}
+                                                            </strong>
+                                                        </td>
+
+                                                        {/* Email */}
+
+                                                        <td>
+                                                            {user.email}
+                                                        </td>
+
+                                                        {/* Phone */}
+
+                                                        <td>
+                                                            {user.phone}
+                                                        </td>
+
+                                                        {/* Role */}
+
+                                                        <td>
+
+                                                            <span
+                                                                className={`badge ${getRoleBadge(
+                                                                    user.role
+                                                                )}`}
+                                                            >
+                                                                {user.role ===
+                                                                "admin"
+                                                                    ? "Admin"
+                                                                    : "Client"}
+                                                            </span>
+
+                                                        </td>
+
+                                                        {/* Action */}
+
+                                                        <td>
+
+                                                            {user.role ===
+                                                            "admin" ? (
+
+                                                                <button
+                                                                    className="btn btn-sm btn-secondary"
+                                                                    disabled
+                                                                >
+                                                                    Admin
+                                                                </button>
+
+                                                            ) : (
+
+                                                                <button
+                                                                    className="btn btn-sm btn-outline-danger"
+                                                                    onClick={() =>
+                                                                        handleDelete(
+                                                                            user._id,
+                                                                            user.role
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Delete
+                                                                </button>
+
+                                                            )}
+
+                                                        </td>
+
+                                                    </tr>
+
+                                                )
+                                            )}
+
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+
+                            {/* ================================================= */}
+                            {/* MOBILE CARD LAYOUT */}
+                            {/* ================================================= */}
+
+                            <div className="d-md-none">
+
+                                <div className="d-flex flex-column gap-3">
 
                                     {users.map(
                                         (user, index) => (
 
-                                            <tr
+                                            <div
                                                 key={user._id}
+                                                className="border rounded-3 p-3 shadow-sm"
                                             >
 
-                                                {/* Number */}
+                                                {/* User Header */}
 
-                                                <td>
-                                                    {index + 1}
-                                                </td>
+                                                <div className="d-flex justify-content-between align-items-start gap-2 mb-3">
 
-                                                {/* Name */}
+                                                    <div className="d-flex align-items-center gap-2">
 
-                                                <td>
-                                                    <strong>
-                                                        {user.name}
-                                                    </strong>
-                                                </td>
+                                                        <div
+                                                            className="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center"
+                                                            style={{
+                                                                width: "40px",
+                                                                height: "40px",
+                                                                minWidth: "40px",
+                                                            }}
+                                                        >
+                                                            {index + 1}
+                                                        </div>
 
-                                                {/* Email */}
+                                                        <div>
 
-                                                <td>
-                                                    {user.email}
-                                                </td>
+                                                            <div
+                                                                className="fw-bold"
+                                                                style={{
+                                                                    overflowWrap:
+                                                                        "anywhere",
+                                                                }}
+                                                            >
+                                                                {user.name}
+                                                            </div>
 
-                                                {/* Phone */}
+                                                            <small className="text-muted">
+                                                                User #{index + 1}
+                                                            </small>
 
-                                                <td>
-                                                    {user.phone}
-                                                </td>
+                                                        </div>
 
-                                                {/* Role */}
-
-                                                <td>
+                                                    </div>
 
                                                     <span
                                                         className={`badge ${getRoleBadge(
@@ -269,26 +385,64 @@ function Users() {
                                                             : "Client"}
                                                     </span>
 
-                                                </td>
+                                                </div>
+
+
+                                                {/* Email */}
+
+                                                <div className="mb-2">
+
+                                                    <small className="text-muted d-block">
+                                                        Email
+                                                    </small>
+
+                                                    <div
+                                                        className="fw-medium"
+                                                        style={{
+                                                            overflowWrap:
+                                                                "anywhere",
+                                                        }}
+                                                    >
+                                                        {user.email}
+                                                    </div>
+
+                                                </div>
+
+
+                                                {/* Phone */}
+
+                                                <div className="mb-3">
+
+                                                    <small className="text-muted d-block">
+                                                        Phone
+                                                    </small>
+
+                                                    <div>
+                                                        {user.phone || "Not provided"}
+                                                    </div>
+
+                                                </div>
+
 
                                                 {/* Action */}
 
-                                                <td>
+                                                <div className="pt-2 border-top">
 
                                                     {user.role ===
                                                     "admin" ? (
 
                                                         <button
-                                                            className="btn btn-sm btn-secondary"
+                                                            className="btn btn-secondary w-100"
                                                             disabled
                                                         >
-                                                            Admin
+                                                            <i className="bi bi-shield-lock me-2"></i>
+                                                            Admin Account
                                                         </button>
 
                                                     ) : (
 
                                                         <button
-                                                            className="btn btn-sm btn-outline-danger"
+                                                            className="btn btn-outline-danger w-100"
                                                             onClick={() =>
                                                                 handleDelete(
                                                                     user._id,
@@ -296,23 +450,24 @@ function Users() {
                                                                 )
                                                             }
                                                         >
-                                                            Delete
+                                                            <i className="bi bi-trash me-2"></i>
+                                                            Delete User
                                                         </button>
 
                                                     )}
 
-                                                </td>
+                                                </div>
 
-                                            </tr>
+                                            </div>
 
                                         )
                                     )}
 
-                                </tbody>
+                                </div>
 
-                            </table>
+                            </div>
 
-                        </div>
+                        </>
 
                     )}
 
