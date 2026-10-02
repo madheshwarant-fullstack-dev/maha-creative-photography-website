@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const API_URL =
-    import.meta.env.VITE_API_URL ||
-    "http://localhost:5000";
+import { API_URL } from "../../services/api";
 
 function Booking() {
     const navigate = useNavigate();
@@ -98,7 +96,7 @@ function Booking() {
         if (packageId && packages.length > 0) {
             const foundPackage = packages.find(
                 (item) =>
-                    item.packageId === packageId
+                    item.packageId === packageId || item._id === packageId
             );
 
             if (foundPackage) {
@@ -125,7 +123,7 @@ function Booking() {
 
         const foundPackage = packages.find(
             (item) =>
-                item.packageId === selectedId
+                item.packageId === selectedId || item._id === selectedId
         );
 
         setSelectedPackage(
@@ -182,7 +180,7 @@ function Booking() {
                 message: formData.message,
 
                 packageId:
-                    selectedPackage?.packageId || "",
+                    selectedPackage?.packageId || selectedPackage?._id || "",
 
                 packageName:
                     selectedPackage?.name || "",
@@ -427,8 +425,8 @@ function Booking() {
                                                 className="form-select"
                                                 value={
                                                     selectedPackage
-                                                        ?.packageId ||
-                                                    ""
+                                                        ? (selectedPackage.packageId || selectedPackage._id)
+                                                        : ""
                                                 }
                                                 onChange={
                                                     handlePackageChange
@@ -448,7 +446,7 @@ function Booking() {
                                                                 item._id
                                                             }
                                                             value={
-                                                                item.packageId
+                                                                item.packageId || item._id
                                                             }
                                                         >
                                                             {

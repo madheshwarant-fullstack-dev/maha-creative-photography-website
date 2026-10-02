@@ -1,32 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const API_URL =
-    import.meta.env.VITE_API_URL ||
-    "http://localhost:5000";
+import { API_URL, resolveImageUrl } from "../../services/api";
 
 function PackageImage({ image, alt }) {
     const [loaded, setLoaded] = useState(false);
     const [error, setError] = useState(false);
 
-    const getImageUrl = (imagePath) => {
-        if (!imagePath) return "";
-
-        if (
-            imagePath.startsWith("http://") ||
-            imagePath.startsWith("https://")
-        ) {
-            return imagePath;
-        }
-
-        if (imagePath.startsWith("/")) {
-            return `${API_URL}${imagePath}`;
-        }
-
-        return `${API_URL}/${imagePath}`;
-    };
-
-    const imageUrl = getImageUrl(image);
+    const imageUrl = resolveImageUrl(image);
 
     if (!imageUrl || error) {
         return (
@@ -323,7 +303,7 @@ function Packages() {
                                                 className="btn btn-dark w-100"
                                                 onClick={() =>
                                                     navigate(
-                                                        `/package/${pkg.packageId}`
+                                                        `/package/${pkg.packageId || pkg._id}`
                                                     )
                                                 }
                                             >

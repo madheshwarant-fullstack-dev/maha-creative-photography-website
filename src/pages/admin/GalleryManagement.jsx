@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const API_URL =
-    import.meta.env.VITE_API_URL ||
-    "http://localhost:5000";
+import { API_URL, resolveImageUrl } from "../../services/api";
 
 function GalleryManagement() {
     const [gallery, setGallery] = useState([]);
@@ -273,24 +271,7 @@ function GalleryManagement() {
         }
     };
 
-    // ================= IMAGE URL =================
 
-    const getImageUrl = (imagePath) => {
-        if (!imagePath) return "";
-
-        if (
-            imagePath.startsWith("http://") ||
-            imagePath.startsWith("https://")
-        ) {
-            return imagePath;
-        }
-
-        if (imagePath.startsWith("/")) {
-            return `${API_URL}${imagePath}`;
-        }
-
-        return `${API_URL}/${imagePath}`;
-    };
 
     // ================= RENDER =================
 
@@ -577,7 +558,7 @@ function GalleryManagement() {
 
                                 {item.image && (
                                     <img
-                                        src={getImageUrl(
+                                        src={resolveImageUrl(
                                             item.image
                                         )}
                                         className="card-img-top"

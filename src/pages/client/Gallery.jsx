@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
-
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  "http://localhost:5000";
+import { API_URL, resolveImageUrl } from "../../services/api";
 
 function Gallery() {
   const [photos, setPhotos] = useState([]);
@@ -38,20 +35,6 @@ function Gallery() {
   useEffect(() => {
     fetchGallery();
   }, []);
-
-  // Get image URL
-  const getImageUrl = (image) => {
-    if (!image) return "";
-
-    if (
-      image.startsWith("http://") ||
-      image.startsWith("https://")
-    ) {
-      return image;
-    }
-
-    return `${API_URL}${image}`;
-  };
 
   return (
     <div className="gallery-page">
@@ -115,7 +98,7 @@ function Gallery() {
                 <div className="gallery-card">
 
                   <img
-                    src={getImageUrl(photo.image)}
+                    src={resolveImageUrl(photo.image)}
                     alt={photo.title}
                     className="img-fluid w-100"
                     style={{
@@ -204,7 +187,7 @@ function Gallery() {
 
             {/* Full Image */}
             <img
-              src={getImageUrl(selectedPhoto.image)}
+              src={resolveImageUrl(selectedPhoto.image)}
               alt={selectedPhoto.title}
               style={{
                 maxWidth: "100%",

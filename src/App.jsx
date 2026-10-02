@@ -23,6 +23,8 @@ import PackageDetail from "./pages/client/PackageDetail";
 import Booking from "./pages/client/Booking";
 import Contact from "./pages/client/Contact";
 import Login from "./pages/client/Login";
+import ForgotPassword from "./pages/client/ForgotPassword";
+import ResetPassword from "./pages/client/ResetPassword";
 import Signup from "./pages/client/Signup";
 import Profile from "./pages/client/Profile";
 import MyBookings from "./pages/client/MyBookings";
@@ -30,6 +32,8 @@ import MyBookings from "./pages/client/MyBookings";
 // ================= ADMIN PAGES =================
 
 import AdminLogin from "./pages/admin/AdminLogin";
+import AdminForgotPassword from "./pages/admin/AdminForgotPassword";
+import AdminResetPassword from "./pages/admin/AdminResetPassword";
 import Dashboard from "./pages/admin/Dashboard";
 import Users from "./pages/admin/Users";
 import Bookings from "./pages/admin/Bookings";
@@ -156,6 +160,16 @@ function App() {
                 />
 
                 <Route
+                    path="/forgot-password"
+                    element={<ForgotPassword />}
+                />
+
+                <Route
+                    path="/reset-password/:token"
+                    element={<ResetPassword />}
+                />
+
+                <Route
                     path="/signup"
                     element={<Signup />}
                 />
@@ -188,11 +202,21 @@ function App() {
 
                 </Route>
 
-                {/* ================= ADMIN LOGIN ================= */}
+                {/* ================= ADMIN AUTH ================= */}
 
                 <Route
                     path="/admin/login"
                     element={<AdminLogin />}
+                />
+
+                <Route
+                    path="/admin/forgot-password"
+                    element={<AdminForgotPassword />}
+                />
+
+                <Route
+                    path="/admin/reset-password/:token"
+                    element={<AdminResetPassword />}
                 />
 
                 {/* ================= ADMIN PROTECTED ================= */}

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 import About from "./About";
 import Services from "./Services";
@@ -36,19 +37,19 @@ function Home() {
 
                             <div className="mt-4">
 
-                                <a
-                                    href="/booking"
+                                <Link
+                                    to="/booking"
                                     className="btn btn-pink btn-lg me-3"
                                 >
                                     Book Your Session
-                                </a>
+                                </Link>
 
-                                <a
-                                    href="/gallery"
+                                <Link
+                                    to="/gallery"
                                     className="btn btn-outline-light btn-lg"
                                 >
                                     View Gallery
-                                </a>
+                                </Link>
 
                             </div>
 

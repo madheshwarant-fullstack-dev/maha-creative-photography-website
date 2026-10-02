@@ -1,9 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
-const API_URL =
-    import.meta.env.VITE_API_URL ||
-    "http://localhost:5000";
+import { Link, useNavigate } from "react-router-dom";
+import { API_URL } from "../../services/api";
 
 function AdminLogin() {
     const navigate = useNavigate();
@@ -15,6 +12,7 @@ function AdminLogin() {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
 
     // ================= INPUT CHANGE =================
 
@@ -201,26 +199,63 @@ function AdminLogin() {
 
                                     {/* PASSWORD */}
 
-                                    <div className="mb-4">
+                                    <div className="mb-2">
 
                                         <label className="form-label fw-semibold">
                                             Password
                                         </label>
 
-                                        <input
-                                            type="password"
-                                            name="password"
-                                            className="form-control"
-                                            placeholder="Enter password"
-                                            value={
-                                                formData.password
-                                            }
-                                            onChange={
-                                                handleChange
-                                            }
-                                            required
-                                        />
+                                        <div className="input-group">
+                                            <input
+                                                type={
+                                                    showPassword
+                                                        ? "text"
+                                                        : "password"
+                                                }
+                                                name="password"
+                                                className="form-control"
+                                                placeholder="Enter password"
+                                                value={
+                                                    formData.password
+                                                }
+                                                onChange={
+                                                    handleChange
+                                                }
+                                                required
+                                            />
+                                            <button
+                                                type="button"
+                                                className="input-group-text bg-white text-muted"
+                                                onClick={() =>
+                                                    setShowPassword(!showPassword)
+                                                }
+                                                aria-label={
+                                                    showPassword
+                                                        ? "Hide password"
+                                                        : "Show password"
+                                                }
+                                            >
+                                                <i
+                                                    className={
+                                                        showPassword
+                                                            ? "bi bi-eye-slash"
+                                                            : "bi bi-eye"
+                                                    }
+                                                ></i>
+                                            </button>
+                                        </div>
 
+                                    </div>
+
+                                    {/* FORGOT PASSWORD */}
+                                    <div className="d-flex justify-content-end mb-4">
+                                        <Link
+                                            to="/admin/forgot-password"
+                                            className="small text-decoration-none text-muted"
+                                            style={{ fontWeight: "500" }}
+                                        >
+                                            Forgot Password?
+                                        </Link>
                                     </div>
 
 

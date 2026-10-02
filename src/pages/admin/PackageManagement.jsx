@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const API_URL =
-    import.meta.env.VITE_API_URL ||
-    "http://localhost:5000";
+import { API_URL, resolveImageUrl } from "../../services/api";
 
 function PackageManagement() {
     const [packages, setPackages] = useState([]);
@@ -356,24 +354,7 @@ function PackageManagement() {
         }
     };
 
-    // ================= IMAGE URL =================
 
-    const getImageUrl = (image) => {
-        if (!image) return "";
-
-        if (
-            image.startsWith("http://") ||
-            image.startsWith("https://")
-        ) {
-            return image;
-        }
-
-        if (image.startsWith("/")) {
-            return `${API_URL}${image}`;
-        }
-
-        return `${API_URL}/${image}`;
-    };
 
     // ================= RENDER =================
 
@@ -773,7 +754,7 @@ Calendar`}
 
                                 {pkg.image ? (
                                     <img
-                                        src={getImageUrl(
+                                        src={resolveImageUrl(
                                             pkg.image
                                         )}
                                         className="card-img-top"

@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  "http://localhost:5000";
+import { API_URL } from "../../services/api";
 
 function Login() {
   const navigate = useNavigate();
@@ -13,6 +10,8 @@ function Login() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -35,7 +34,7 @@ function Login() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email,
+            email: email.trim(),
             password,
           }),
         }
@@ -79,37 +78,49 @@ function Login() {
   };
 
   return (
-    <div className="login-page">
-
-      <div className="container py-5">
-
+    <div
+      className="login-page min-vh-100 d-flex align-items-center py-5"
+      style={{
+        backgroundColor: "#f8f9fa",
+      }}
+    >
+      <div className="container">
         <div className="row justify-content-center">
-
-          <div className="col-md-6 col-lg-5">
-
-            <div className="card shadow border-0">
-
+          <div className="col-md-6 col-lg-5 col-xl-4">
+            <div className="card shadow-sm border-0 rounded-4">
               <div className="card-body p-4 p-md-5">
 
-                {/* Heading */}
+                {/* Logo & Heading */}
                 <div className="text-center mb-4">
+                  <Link to="/">
+                    <img
+                      src="/images/Logo.png"
+                      alt="Maha Creative Photography"
+                      style={{
+                        width: "90px",
+                        height: "90px",
+                        objectFit: "contain",
+                      }}
+                      className="mb-2"
+                    />
+                  </Link>
 
-                  <h2 className="fw-bold">
+                  <h3 className="fw-bold mb-1">
                     Welcome Back
-                  </h2>
+                  </h3>
 
-                  <p className="text-muted">
+                  <p className="text-muted small mb-0">
                     Login to Maha Creative Photography
                   </p>
-
                 </div>
 
                 {/* Error */}
                 {error && (
                   <div
-                    className="alert alert-danger"
+                    className="alert alert-danger py-2 small"
                     role="alert"
                   >
+                    <i className="bi bi-exclamation-circle me-2"></i>
                     {error}
                   </div>
                 )}
@@ -119,56 +130,83 @@ function Login() {
 
                   {/* Email */}
                   <div className="mb-3">
-
                     <label
                       htmlFor="email"
-                      className="form-label fw-semibold"
+                      className="form-label fw-semibold small"
                     >
                       Email Address
                     </label>
 
-                    <input
-                      type="email"
-                      id="email"
-                      className="form-control"
-                      placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) =>
-                        setEmail(e.target.value)
-                      }
-                      required
-                    />
-
+                    <div className="input-group">
+                      <span className="input-group-text bg-light border-end-0">
+                        <i className="bi bi-envelope text-muted"></i>
+                      </span>
+                      <input
+                        type="email"
+                        id="email"
+                        className="form-control border-start-0 ps-0"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) =>
+                          setEmail(e.target.value)
+                        }
+                        required
+                        autoComplete="email"
+                      />
+                    </div>
                   </div>
 
                   {/* Password */}
-                  <div className="mb-3">
-
+                  <div className="mb-2">
                     <label
                       htmlFor="password"
-                      className="form-label fw-semibold"
+                      className="form-label fw-semibold small"
                     >
                       Password
                     </label>
 
-                    <input
-                      type="password"
-                      id="password"
-                      className="form-control"
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(e) =>
-                        setPassword(e.target.value)
-                      }
-                      required
-                    />
+                    <div className="input-group">
+                      <span className="input-group-text bg-light border-end-0">
+                        <i className="bi bi-lock text-muted"></i>
+                      </span>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        id="password"
+                        className="form-control border-start-0 border-end-0 ps-0"
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) =>
+                          setPassword(e.target.value)
+                        }
+                        required
+                        autoComplete="current-password"
+                      />
+                      <button
+                        type="button"
+                        className="input-group-text bg-light border-start-0 text-muted"
+                        onClick={() => setShowPassword(!showPassword)}
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                      >
+                        <i className={showPassword ? "bi bi-eye-slash" : "bi bi-eye"}></i>
+                      </button>
+                    </div>
+                  </div>
 
+                  {/* Forgot Password Link */}
+                  <div className="d-flex justify-content-end mb-3">
+                    <Link
+                      to="/forgot-password"
+                      className="small text-decoration-none"
+                      style={{ color: "#ff1493", fontWeight: "600" }}
+                    >
+                      Forgot Password?
+                    </Link>
                   </div>
 
                   {/* Login Button */}
                   <button
                     type="submit"
-                    className="btn btn-dark w-100 mt-2"
+                    className="btn btn-dark w-100 py-2 fw-semibold"
                     disabled={loading}
                   >
                     {loading ? (
@@ -188,30 +226,28 @@ function Login() {
                 </form>
 
                 {/* Signup */}
-                <div className="text-center mt-4">
-
-                  <p className="mb-0">
+                <div className="text-center mt-4 pt-2 border-top">
+                  <p className="mb-0 small text-muted">
                     Don't have an account?{" "}
                     <Link
                       to="/signup"
                       className="text-decoration-none fw-semibold"
+                      style={{ color: "#ff1493" }}
                     >
-                      Signup
+                      Create Account
                     </Link>
                   </p>
-
                 </div>
 
                 {/* Admin Login */}
                 <div className="text-center mt-3">
-
                   <Link
                     to="/admin/login"
-                    className="text-decoration-none"
+                    className="text-decoration-none small text-secondary"
                   >
-                    Admin Login
+                    <i className="bi bi-shield-lock me-1"></i>
+                    Admin Portal
                   </Link>
-
                 </div>
 
               </div>

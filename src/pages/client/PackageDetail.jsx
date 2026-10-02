@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
-const API_URL =
-    import.meta.env.VITE_API_URL ||
-    "http://localhost:5000";
+import { API_URL, resolveImageUrl } from "../../services/api";
 
 function PackageDetail() {
     const { packageId } = useParams();
@@ -12,25 +9,6 @@ function PackageDetail() {
     const [pkg, setPkg] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-
-    // ================= IMAGE URL =================
-
-    const getImageUrl = (image) => {
-        if (!image) return "";
-
-        if (
-            image.startsWith("http://") ||
-            image.startsWith("https://")
-        ) {
-            return image;
-        }
-
-        if (image.startsWith("/")) {
-            return `${API_URL}${image}`;
-        }
-
-        return `${API_URL}/${image}`;
-    };
 
     // ================= FETCH PACKAGE =================
 
@@ -166,7 +144,7 @@ function PackageDetail() {
 
                             {pkg.image ? (
                                 <img
-                                    src={getImageUrl(
+                                    src={resolveImageUrl(
                                         pkg.image
                                     )}
                                     alt={pkg.name}
@@ -316,7 +294,7 @@ function PackageDetail() {
                                     className="btn btn-dark btn-lg w-100 mb-3"
                                     onClick={() =>
                                         navigate(
-                                            `/booking?packageId=${pkg.packageId}`
+                                            `/booking?packageId=${pkg.packageId || pkg._id}`
                                         )
                                     }
                                 >

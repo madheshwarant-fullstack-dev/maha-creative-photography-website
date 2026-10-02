@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
-
-const API_URL =
-    import.meta.env.VITE_API_URL ||
-    "http://localhost:5000";
+import { API_URL } from "../../services/api";
 
 function Messages() {
     const [messages, setMessages] = useState([]);
