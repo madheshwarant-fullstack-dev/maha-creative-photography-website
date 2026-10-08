@@ -79,6 +79,7 @@ function Bookings() {
                     },
                     body: JSON.stringify({
                         status,
+                        forceResend: true,
                     }),
                 }
             );
@@ -93,7 +94,10 @@ function Bookings() {
                 return;
             }
 
-            alert("Booking status updated successfully!");
+            const emailNote = data.emailDelivery?.clientSent
+                ? `\nConfirmation email delivered to ${data.emailDelivery.recipient || "client"}!`
+                : "";
+            alert(`Booking status updated to ${status} successfully!${emailNote}`);
 
             fetchBookings();
         } catch (error) {

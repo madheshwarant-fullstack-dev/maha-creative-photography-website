@@ -41,24 +41,43 @@ api.interceptors.response.use(
 );
 
 // ================= IMAGE URL HELPER =================
-// Ensures frontend static assets (/images/...) stay local to Vercel
-// and backend uploads (/uploads/...) resolve through Render backend
+// Ensures frontend static assets (/images/...) stay local to Vercel/Vite
+// and backend uploads (/uploads/...) resolve through backend API_URL
 export const resolveImageUrl = (imagePath) => {
-    if (!imagePath) return "";
+    if (!imagePath || typeof imagePath !== "string") return "";
 
-    // If it's already an external absolute URL
-    if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
-        return imagePath;
+    // Normalize Windows backslashes
+    let path = imagePath.trim().replace(/\\/g, "/");
+
+    // Strip hardcoded localhost / 127.0.0.1 development base URLs if stored in DB
+    path = path.replace(/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/, "");
+
+    // If it's an external absolute URL
+    if (path.startsWith("http://") || path.startsWith("https://")) {
+        return path;
     }
 
     // If it's a frontend static asset inside public/images
-    if (imagePath.startsWith("/images") || imagePath.startsWith("images/")) {
-        return imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
+    if (path.startsWith("/images/") || path.startsWith("images/")) {
+        return path.startsWith("/") ? path : `/${path}`;
     }
 
     // If it's a backend upload inside uploads/
-    const normalized = imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
-    return `${API_URL}${normalized}`;
+    if (path.startsWith("/uploads/") || path.startsWith("uploads/")) {
+        const normalized = path.startsWith("/") ? path : `/${path}`;
+        return `${API_URL}${normalized}`;
+    }
+
+    // If it has a leading slash
+    if (path.startsWith("/")) {
+        return `${API_URL}${path}`;
+    }
+
+    // Fallback: assume raw uploaded filename
+    return `${API_URL}/uploads/${path}`;
 };
 
+export const getImageUrl = resolveImageUrl;
+
 export default api;
+

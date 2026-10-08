@@ -142,10 +142,10 @@ function PackageDetail() {
 
                         <div className="col-lg-6">
 
-                            {pkg.image ? (
+                            {(pkg.imageUrl || pkg.image) ? (
                                 <img
                                     src={resolveImageUrl(
-                                        pkg.image
+                                        pkg.imageUrl || pkg.image
                                     )}
                                     alt={pkg.name}
                                     className="img-fluid w-100 h-100"

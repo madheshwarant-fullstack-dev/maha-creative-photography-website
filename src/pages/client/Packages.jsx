@@ -237,7 +237,7 @@ function Packages() {
 
                                         {/* IMAGE */}
                                         <PackageImage
-                                            image={pkg.image}
+                                            image={pkg.imageUrl || pkg.image}
                                             alt={pkg.name}
                                         />
 

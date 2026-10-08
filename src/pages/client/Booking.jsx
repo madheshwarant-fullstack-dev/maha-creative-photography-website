@@ -232,7 +232,8 @@ function Booking() {
 
             if (data.success) {
                 setSuccess(
-                    "Booking submitted successfully!"
+                    data.message ||
+                        "Booking submitted successfully! A confirmation email has been sent to your email address."
                 );
 
                 setFormData((prev) => ({

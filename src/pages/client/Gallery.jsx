@@ -98,12 +98,16 @@ function Gallery() {
                 <div className="gallery-card">
 
                   <img
-                    src={resolveImageUrl(photo.image)}
+                    src={resolveImageUrl(photo.imageUrl || photo.image)}
                     alt={photo.title}
                     className="img-fluid w-100"
                     style={{
                       height: "300px",
                       objectFit: "cover",
+                    }}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/images/hero.jpeg";
                     }}
                   />
 
@@ -187,8 +191,12 @@ function Gallery() {
 
             {/* Full Image */}
             <img
-              src={resolveImageUrl(selectedPhoto.image)}
+              src={resolveImageUrl(selectedPhoto.imageUrl || selectedPhoto.image)}
               alt={selectedPhoto.title}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "/images/hero.jpeg";
+              }}
               style={{
                 maxWidth: "100%",
                 maxHeight: "80vh",
