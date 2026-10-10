@@ -78,6 +78,25 @@ function PackageManagement() {
             return;
         }
 
+        // Validate file type
+        const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg", "image/gif"];
+        if (!allowedTypes.includes(file.type)) {
+            showMessage("danger", "Invalid file type. Please select a JPG, PNG, WEBP, or GIF image.");
+            e.target.value = "";
+            setImageFile(null);
+            setImagePreview(existingImageUrl ? resolveImageUrl(existingImageUrl) : "");
+            return;
+        }
+
+        // Validate file size (15MB max)
+        if (file.size > 15 * 1024 * 1024) {
+            showMessage("danger", "Image file exceeds the 15MB limit. Please choose a smaller photo.");
+            e.target.value = "";
+            setImageFile(null);
+            setImagePreview(existingImageUrl ? resolveImageUrl(existingImageUrl) : "");
+            return;
+        }
+
         setImageFile(file);
         const previewUrl = URL.createObjectURL(file);
         setImagePreview(previewUrl);
