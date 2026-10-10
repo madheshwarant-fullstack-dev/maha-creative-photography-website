@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { API_URL, resolveImageUrl } from "../../services/api";
+import { API_URL, resolveImageUrl, NEUTRAL_PLACEHOLDER_IMAGE } from "../../services/api";
 
 function PackageManagement() {
     const [packages, setPackages] = useState([]);
@@ -462,8 +462,11 @@ function PackageManagement() {
                                                 border: "1px solid #ddd",
                                             }}
                                             onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = "/images/hero.jpeg";
+                                                e.currentTarget.onerror = null;
+                                                e.currentTarget.src = NEUTRAL_PLACEHOLDER_IMAGE;
+                                                console.warn(
+                                                    `[PackageManagement Diagnostic] Failed to load preview image: ${preview}. Displaying neutral placeholder.`
+                                                );
                                             }}
                                         />
                                         <div>
@@ -586,8 +589,11 @@ function PackageManagement() {
                                                 objectFit: "cover",
                                             }}
                                             onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = "/images/hero.jpeg";
+                                                e.currentTarget.onerror = null;
+                                                e.currentTarget.src = NEUTRAL_PLACEHOLDER_IMAGE;
+                                                console.warn(
+                                                    `[PackageManagement Diagnostic] Failed to load image for package "${pkg.name}" (ID: ${pkg.packageId}). Attempted URL: "${imgUrl}". Displaying neutral placeholder.`
+                                                );
                                             }}
                                         />
                                     ) : (

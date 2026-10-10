@@ -6,9 +6,13 @@ import { API_URL } from "../../services/api";
 function Dashboard() {
     const navigate = useNavigate();
 
-    const user = JSON.parse(
-        localStorage.getItem("user")
-    );
+    let user = null;
+    try {
+        const stored = localStorage.getItem("user");
+        user = stored ? JSON.parse(stored) : null;
+    } catch {
+        user = null;
+    }
 
     const [stats, setStats] = useState({
         packages: 0,

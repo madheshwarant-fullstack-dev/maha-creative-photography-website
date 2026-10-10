@@ -28,6 +28,7 @@ import ResetPassword from "./pages/client/ResetPassword";
 import Signup from "./pages/client/Signup";
 import Profile from "./pages/client/Profile";
 import MyBookings from "./pages/client/MyBookings";
+import NotFound from "./pages/client/NotFound";
 
 // ================= ADMIN PAGES =================
 
@@ -254,6 +255,18 @@ function App() {
                     />
 
                 </Route>
+
+                {/* ================= 404 CATCH-ALL ================= */}
+                <Route
+                    path="*"
+                    element={
+                        <>
+                            <Navbar />
+                            <NotFound />
+                            <Footer />
+                        </>
+                    }
+                />
 
             </Routes>
 

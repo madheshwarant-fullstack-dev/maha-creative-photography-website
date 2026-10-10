@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { API_URL, resolveImageUrl } from "../../services/api";
+import { Link } from "react-router-dom";
+import { API_URL, resolveImageUrl, NEUTRAL_PLACEHOLDER_IMAGE } from "../../services/api";
+
+const PRESET_CATEGORIES = [
+    "Wedding",
+    "Birthday",
+    "Baby Shower",
+    "Baby Shoot",
+    "Engagement",
+    "Pre Wedding",
+    "Model Photography",
+    "Portraits",
+    "Events",
+    "Outdoor",
+];
 
 function GalleryManagement() {
     const [gallery, setGallery] = useState([]);
@@ -11,13 +25,13 @@ function GalleryManagement() {
     const [form, setForm] = useState({
         title: "",
         category: "",
+        customCategory: "",
         description: "",
     });
 
     const [image, setImage] = useState(null);
     const [preview, setPreview] = useState("");
     const [existingImageUrl, setExistingImageUrl] = useState("");
-
     const [editingId, setEditingId] = useState(null);
 
     const showMessage = (type, text) => {
@@ -29,20 +43,39 @@ function GalleryManagement() {
 
     // ================= FETCH GALLERY =================
     const fetchGallery = async () => {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+
         try {
             setLoading(true);
 
-            const response = await fetch(`${API_URL}/api/gallery`);
+            const response = await fetch(`${API_URL}/api/gallery`, {
+                signal: controller.signal,
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                throw new Error(`Server returned status ${response.status}`);
+            }
+
             const data = await response.json();
 
-            if (data.success) {
-                setGallery(data.gallery || []);
+            if (data.success && Array.isArray(data.gallery)) {
+                setGallery(data.gallery);
             } else {
                 showMessage("danger", data.message || "Failed to load gallery images");
             }
         } catch (error) {
+            clearTimeout(timeoutId);
             console.error("Fetch gallery error:", error);
-            showMessage("danger", "Unable to connect to server to fetch gallery.");
+            const isTimeout = error.name === "AbortError";
+            showMessage(
+                "danger",
+                isTimeout
+                    ? "Connection timed out while fetching gallery. Backend may be waking up."
+                    : "Unable to connect to server to fetch gallery."
+            );
         } finally {
             setLoading(false);
         }
@@ -80,8 +113,13 @@ function GalleryManagement() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!form.title.trim() || !form.category.trim()) {
-            showMessage("warning", "Please enter both title and category.");
+        const finalCategory =
+            form.category === "CUSTOM"
+                ? form.customCategory.trim()
+                : form.category.trim();
+
+        if (!form.title.trim() || !finalCategory) {
+            showMessage("warning", "Please provide both a title and a valid category.");
             return;
         }
 
@@ -103,7 +141,7 @@ function GalleryManagement() {
 
             const formData = new FormData();
             formData.append("title", form.title.trim());
-            formData.append("category", form.category.trim());
+            formData.append("category", finalCategory);
             formData.append("description", form.description.trim());
 
             // Only append file if user actively selected a new one
@@ -143,8 +181,8 @@ function GalleryManagement() {
             showMessage(
                 "success",
                 editingId
-                    ? "Gallery item updated successfully in permanent cloud storage!"
-                    : "Gallery image uploaded permanently to Cloudinary!"
+                    ? "Gallery item updated successfully!"
+                    : "New gallery image uploaded and published to portfolio successfully!"
             );
 
             resetForm();
@@ -161,9 +199,12 @@ function GalleryManagement() {
     const handleEdit = (item) => {
         setEditingId(item._id);
 
+        const isKnownPreset = PRESET_CATEGORIES.includes(item.category);
+
         setForm({
             title: item.title || "",
-            category: item.category || "",
+            category: isKnownPreset ? item.category : "CUSTOM",
+            customCategory: isKnownPreset ? "" : item.category || "",
             description: item.description || "",
         });
 
@@ -173,7 +214,6 @@ function GalleryManagement() {
         setExistingImageUrl(currentImg);
         setPreview(currentImg ? resolveImageUrl(currentImg) : "");
 
-        // Clear file input element
         const fileInput = document.getElementById("galleryImage");
         if (fileInput) {
             fileInput.value = "";
@@ -188,7 +228,7 @@ function GalleryManagement() {
     // ================= DELETE =================
     const handleDelete = async (id, title) => {
         const confirmDelete = window.confirm(
-            `Are you sure you want to permanently delete "${title || "this gallery photo"}"? This will remove the image from Cloudinary and the database.`
+            `Are you sure you want to permanently delete "${title || "this gallery photo"}"? This will remove the image from the portfolio and storage.`
         );
 
         if (!confirmDelete) return;
@@ -198,7 +238,7 @@ function GalleryManagement() {
         try {
             const token = localStorage.getItem("token");
             if (!token) {
-                showMessage("danger", "Admin authorization required.");
+                showMessage("danger", "Admin authorization required. Please log in.");
                 setDeletingId(null);
                 return;
             }
@@ -217,7 +257,7 @@ function GalleryManagement() {
                 return;
             }
 
-            showMessage("success", "Gallery image permanently deleted from cloud and database.");
+            showMessage("success", "Gallery image permanently deleted from portfolio.");
             await fetchGallery();
         } catch (error) {
             console.error("Delete gallery error:", error);
@@ -233,6 +273,7 @@ function GalleryManagement() {
         setForm({
             title: "",
             category: "",
+            customCategory: "",
             description: "",
         });
         setImage(null);
@@ -249,17 +290,27 @@ function GalleryManagement() {
     return (
         <div className="container py-5">
             {/* ================= HEADER ================= */}
-            <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                 <div>
-                    <h2 className="fw-bold">Gallery Management</h2>
+                    <div className="d-flex align-items-center gap-2 mb-1">
+                        <Link to="/admin/dashboard" className="btn btn-sm btn-outline-dark">
+                            <i className="bi bi-arrow-left me-1"></i> Dashboard
+                        </Link>
+                        <h2 className="fw-bold mb-0">Gallery Management</h2>
+                    </div>
                     <p className="text-muted mb-0">
-                        Add, edit, replace and manage photography portfolio images (Permanent Cloudinary Storage).
+                        Upload, edit, and delete photography portfolio images. Only images added here will be shown in the client gallery.
                     </p>
                 </div>
 
-                <button className="btn btn-secondary" onClick={resetForm}>
-                    Clear Form
-                </button>
+                <div className="d-flex gap-2">
+                    <Link to="/gallery" target="_blank" className="btn btn-outline-primary">
+                        <i className="bi bi-box-arrow-up-right me-1"></i> View Live Gallery
+                    </Link>
+                    <button className="btn btn-secondary" onClick={resetForm}>
+                        Clear Form
+                    </button>
+                </div>
             </div>
 
             {/* ================= STATUS NOTIFICATION ================= */}
@@ -278,7 +329,7 @@ function GalleryManagement() {
                 </div>
             )}
 
-            {/* ================= FORM ================= */}
+            {/* ================= FORM CARD ================= */}
             <div className="card shadow-sm mb-5 border-0">
                 <div className="card-body p-4">
                     <div className="d-flex justify-content-between align-items-center mb-4">
@@ -297,13 +348,13 @@ function GalleryManagement() {
                             {/* Title */}
                             <div className="col-md-6">
                                 <label className="form-label fw-semibold">
-                                    Title <span className="text-danger">*</span>
+                                    Photo Title <span className="text-danger">*</span>
                                 </label>
                                 <input
                                     type="text"
                                     name="title"
                                     className="form-control"
-                                    placeholder="Wedding Photography"
+                                    placeholder="e.g. Royal Wedding Reception"
                                     value={form.title}
                                     onChange={handleChange}
                                     required
@@ -311,7 +362,7 @@ function GalleryManagement() {
                                 />
                             </div>
 
-                            {/* Category */}
+                            {/* Category Select */}
                             <div className="col-md-6">
                                 <label className="form-label fw-semibold">
                                     Category <span className="text-danger">*</span>
@@ -325,20 +376,38 @@ function GalleryManagement() {
                                     disabled={submitting}
                                 >
                                     <option value="">Select Category</option>
-                                    <option value="Wedding">Wedding</option>
-                                    <option value="Birthday">Birthday</option>
-                                    <option value="Baby Shower">Baby Shower</option>
-                                    <option value="Baby Shoot">Baby Shoot</option>
-                                    <option value="Engagement">Engagement</option>
-                                    <option value="Pre Wedding">Pre Wedding</option>
-                                    <option value="Other">Other</option>
+                                    {PRESET_CATEGORIES.map((cat) => (
+                                        <option key={cat} value={cat}>
+                                            {cat}
+                                        </option>
+                                    ))}
+                                    <option value="CUSTOM">+ Custom Category (Type your own)</option>
                                 </select>
                             </div>
+
+                            {/* Custom Category Input (shown when CUSTOM selected) */}
+                            {form.category === "CUSTOM" && (
+                                <div className="col-12">
+                                    <label className="form-label fw-semibold">
+                                        Custom Category Name <span className="text-danger">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="customCategory"
+                                        className="form-control"
+                                        placeholder="e.g. Traditional Rituals, Fine Art, Fashion"
+                                        value={form.customCategory}
+                                        onChange={handleChange}
+                                        required
+                                        disabled={submitting}
+                                    />
+                                </div>
+                            )}
 
                             {/* Image Input */}
                             <div className="col-12">
                                 <label className="form-label fw-semibold" htmlFor="galleryImage">
-                                    {editingId ? "Replace Image (Optional)" : "Image File"}
+                                    {editingId ? "Replace Image (Optional)" : "Photo File"}
                                     {!editingId && <span className="text-danger"> *</span>}
                                 </label>
                                 <input
@@ -351,8 +420,8 @@ function GalleryManagement() {
                                 />
                                 <small className="text-muted d-block mt-1">
                                     {editingId
-                                        ? "Leave empty to keep the existing permanent image intact. Select a new file only if you wish to replace it."
-                                        : "Supported formats: JPG, JPEG, PNG, WEBP. Uploads directly to Cloudinary."}
+                                        ? "Leave empty to keep current image intact. Select a new file if you want to replace it."
+                                        : "Supported formats: JPG, JPEG, PNG, WEBP."}
                                 </small>
                             </div>
 
@@ -362,21 +431,21 @@ function GalleryManagement() {
                                     <label className="form-label fw-semibold">
                                         {image
                                             ? "New Image Preview (Will be uploaded)"
-                                            : "Current Saved Image (Will be preserved)"}
+                                            : "Current Saved Image"}
                                     </label>
                                     <div className="d-flex align-items-center gap-3 p-3 bg-light rounded border">
                                         <img
                                             src={preview}
                                             alt="Preview"
                                             style={{
-                                                width: "200px",
-                                                height: "140px",
+                                                width: "180px",
+                                                height: "120px",
                                                 objectFit: "cover",
                                                 borderRadius: "8px",
                                             }}
                                             onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = "/images/hero.jpeg";
+                                                e.currentTarget.onerror = null;
+                                                e.currentTarget.src = NEUTRAL_PLACEHOLDER_IMAGE;
                                             }}
                                         />
                                         <div>
@@ -385,12 +454,12 @@ function GalleryManagement() {
                                                     image ? "bg-success" : "bg-primary"
                                                 } mb-2`}
                                             >
-                                                {image ? "New File Selected" : "Current Permanent Image"}
+                                                {image ? "New File Selected" : "Current Stored Image"}
                                             </span>
                                             <p className="text-muted small mb-0">
                                                 {image
                                                     ? `Ready to upload: ${image.name} (${(image.size / 1024).toFixed(1)} KB)`
-                                                    : "This image is stored securely and will not be altered unless you choose a new file."}
+                                                    : "This photo is currently active in the database."}
                                             </p>
                                         </div>
                                     </div>
@@ -399,12 +468,12 @@ function GalleryManagement() {
 
                             {/* Description */}
                             <div className="col-12">
-                                <label className="form-label fw-semibold">Description</label>
+                                <label className="form-label fw-semibold">Description (Optional)</label>
                                 <textarea
                                     name="description"
                                     className="form-control"
                                     rows="3"
-                                    placeholder="Enter image description..."
+                                    placeholder="Enter caption or description for this photo..."
                                     value={form.description}
                                     onChange={handleChange}
                                     disabled={submitting}
@@ -429,8 +498,8 @@ function GalleryManagement() {
                                 {submitting
                                     ? "Uploading & Saving..."
                                     : editingId
-                                    ? "Update Gallery"
-                                    : "Add Gallery Image"}
+                                    ? "Update Gallery Photo"
+                                    : "Upload to Gallery"}
                             </button>
 
                             {editingId && (
@@ -450,23 +519,26 @@ function GalleryManagement() {
 
             {/* ================= EXISTING GALLERY ================= */}
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <h4 className="fw-bold mb-0">Existing Portfolio</h4>
+                <h4 className="fw-bold mb-0">Current Gallery Images</h4>
                 <span className="badge bg-dark px-3 py-2">{gallery.length} Photos</span>
             </div>
 
             {loading ? (
-                /* ================= LOADING ================= */
+                /* Loading State */
                 <div className="text-center py-5">
-                    <div className="spinner-border" role="status">
+                    <div className="spinner-border text-danger" role="status">
                         <span className="visually-hidden">Loading...</span>
                     </div>
-                    <p className="mt-3 text-muted">Loading portfolio gallery...</p>
+                    <p className="mt-3 text-muted">Loading gallery photos...</p>
                 </div>
             ) : gallery.length === 0 ? (
-                /* ================= NO GALLERY ================= */
-                <div className="alert alert-info">No gallery images found.</div>
+                /* Empty Gallery State */
+                <div className="alert alert-info py-4 text-center">
+                    <i className="bi bi-info-circle me-2 fs-5"></i>
+                    <strong>No photos in gallery.</strong> Use the form above to upload images to display on your portfolio.
+                </div>
             ) : (
-                /* ================= GALLERY CARDS ================= */
+                /* Gallery Grid */
                 <div className="row g-4">
                     {gallery.map((item) => {
                         const imgUrl = resolveImageUrl(item.imageUrl || item.image);
@@ -480,18 +552,18 @@ function GalleryManagement() {
                                             className="card-img-top"
                                             alt={item.title}
                                             style={{
-                                                height: "250px",
+                                                height: "240px",
                                                 objectFit: "cover",
                                             }}
                                             onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = "/images/hero.jpeg";
+                                                e.currentTarget.onerror = null;
+                                                e.currentTarget.src = NEUTRAL_PLACEHOLDER_IMAGE;
                                             }}
                                         />
                                     ) : (
                                         <div
                                             className="bg-light d-flex align-items-center justify-content-center text-muted"
-                                            style={{ height: "250px" }}
+                                            style={{ height: "240px" }}
                                         >
                                             No Image Available
                                         </div>
@@ -505,7 +577,7 @@ function GalleryManagement() {
                                                     className="badge bg-success-subtle text-success border border-success-subtle"
                                                     title="Stored permanently in Cloudinary"
                                                 >
-                                                    Cloud Permanent
+                                                    Cloud
                                                 </span>
                                             )}
                                         </div>
@@ -513,7 +585,7 @@ function GalleryManagement() {
                                         <h5 className="fw-bold">{item.title}</h5>
 
                                         {item.description && (
-                                            <p className="text-muted small">{item.description}</p>
+                                            <p className="text-muted small mb-0">{item.description}</p>
                                         )}
                                     </div>
 

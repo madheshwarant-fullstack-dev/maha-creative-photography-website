@@ -9,6 +9,12 @@ function Profile() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    // Profile Edit State
+    const [isEditing, setIsEditing] = useState(false);
+    const [editForm, setEditForm] = useState({ name: "", phone: "" });
+    const [updateLoading, setUpdateLoading] = useState(false);
+    const [updateStatus, setUpdateStatus] = useState({ success: "", error: "" });
+
     // ================= FETCH PROFILE =================
 
     const fetchProfile = async () => {
@@ -51,6 +57,10 @@ function Profile() {
 
             if (data.success) {
                 setUser(data.user);
+                setEditForm({
+                    name: data.user.name || "",
+                    phone: data.user.phone || "",
+                });
 
                 // Keep localStorage user data updated
                 localStorage.setItem(
@@ -83,6 +93,63 @@ function Profile() {
     useEffect(() => {
         fetchProfile();
     }, []);
+
+    // ================= UPDATE PROFILE HANDLER =================
+
+    const handleUpdateProfile = async (e) => {
+        e.preventDefault();
+        setUpdateStatus({ success: "", error: "" });
+
+        if (!editForm.name.trim() || !editForm.phone.trim()) {
+            setUpdateStatus({
+                success: "",
+                error: "Name and phone cannot be empty.",
+            });
+            return;
+        }
+
+        try {
+            setUpdateLoading(true);
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(`${API_URL}/api/auth/profile`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    name: editForm.name.trim(),
+                    phone: editForm.phone.trim(),
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "Failed to update profile");
+            }
+
+            setUser(data.user);
+            setIsEditing(false);
+            setUpdateStatus({
+                success: "Profile updated successfully!",
+                error: "",
+            });
+
+            // Update stored user details and notify listeners (e.g. Navbar)
+            localStorage.setItem("user", JSON.stringify(data.user));
+            window.dispatchEvent(new Event("storage"));
+        } catch (err) {
+            console.error("Profile update error:", err);
+            setUpdateStatus({
+                success: "",
+                error: err.message || "Failed to update profile",
+            });
+        } finally {
+            setUpdateLoading(false);
+        }
+    };
 
     // ================= LOGOUT =================
 
@@ -180,13 +247,12 @@ function Profile() {
 
                 <div className="text-center mb-5">
 
-                    <h2 className="fw-bold">
+                    <h1 className="fw-bold fs-2">
                         My Profile
-                    </h2>
+                    </h1>
 
                     <p className="text-muted">
-                        View your Maha Creative
-                        Photography account details
+                        Manage your Maha Creative Photography account details
                     </p>
 
                 </div>
@@ -212,13 +278,14 @@ function Profile() {
                                             height: "90px",
                                             fontSize: "36px",
                                         }}
+                                        aria-hidden="true"
                                     >
                                         <i className="bi bi-person-fill"></i>
                                     </div>
 
-                                    <h4 className="fw-bold mt-3 mb-1">
+                                    <h2 className="fw-bold mt-3 mb-1 fs-4">
                                         {user.name}
-                                    </h4>
+                                    </h2>
 
                                     <span
                                         className={`badge ${
@@ -236,100 +303,194 @@ function Profile() {
 
                                 </div>
 
+                                {/* Status Feedback */}
+                                {updateStatus.success && (
+                                    <div className="alert alert-success py-2 small" role="alert">
+                                        <i className="bi bi-check-circle me-2"></i>
+                                        {updateStatus.success}
+                                    </div>
+                                )}
+                                {updateStatus.error && (
+                                    <div className="alert alert-danger py-2 small" role="alert">
+                                        <i className="bi bi-exclamation-triangle me-2"></i>
+                                        {updateStatus.error}
+                                    </div>
+                                )}
+
                                 <hr />
 
-                                {/* ================= NAME ================= */}
+                                {!isEditing ? (
+                                    <>
+                                        {/* ================= VIEW MODE ================= */}
 
-                                <div className="mb-3">
+                                        {/* NAME */}
+                                        <div className="mb-3">
+                                            <label className="form-label text-muted small fw-semibold">
+                                                Full Name
+                                            </label>
+                                            <div className="form-control bg-light">
+                                                <i className="bi bi-person me-2 text-muted"></i>
+                                                {user.name || "-"}
+                                            </div>
+                                        </div>
 
-                                    <label className="form-label text-muted small">
-                                        Full Name
-                                    </label>
+                                        {/* EMAIL */}
+                                        <div className="mb-3">
+                                            <label className="form-label text-muted small fw-semibold">
+                                                Email Address
+                                            </label>
+                                            <div className="form-control bg-light">
+                                                <i className="bi bi-envelope me-2 text-muted"></i>
+                                                {user.email || "-"}
+                                            </div>
+                                        </div>
 
-                                    <div className="form-control bg-light">
-                                        <i className="bi bi-person me-2"></i>
-                                        {user.name || "-"}
-                                    </div>
+                                        {/* PHONE */}
+                                        <div className="mb-3">
+                                            <label className="form-label text-muted small fw-semibold">
+                                                Phone Number
+                                            </label>
+                                            <div className="form-control bg-light">
+                                                <i className="bi bi-telephone me-2 text-muted"></i>
+                                                {user.phone || "-"}
+                                            </div>
+                                        </div>
 
-                                </div>
+                                        {/* ROLE */}
+                                        <div className="mb-4">
+                                            <label className="form-label text-muted small fw-semibold">
+                                                Account Type
+                                            </label>
+                                            <div className="form-control bg-light">
+                                                <i className="bi bi-shield-check me-2 text-muted"></i>
+                                                {user.role === "admin" ? "Administrator" : "Client"}
+                                            </div>
+                                        </div>
 
-                                {/* ================= EMAIL ================= */}
+                                        {/* ================= ACTIONS ================= */}
 
-                                <div className="mb-3">
+                                        <div className="d-grid gap-2">
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-dark"
+                                                onClick={() => {
+                                                    setEditForm({
+                                                        name: user.name || "",
+                                                        phone: user.phone || "",
+                                                    });
+                                                    setIsEditing(true);
+                                                }}
+                                            >
+                                                <i className="bi bi-pencil-square me-2"></i>
+                                                Edit Profile
+                                            </button>
 
-                                    <label className="form-label text-muted small">
-                                        Email Address
-                                    </label>
+                                            <button
+                                                type="button"
+                                                className="btn btn-dark"
+                                                onClick={() => navigate("/my-bookings")}
+                                            >
+                                                <i className="bi bi-camera me-2"></i>
+                                                My Bookings
+                                            </button>
 
-                                    <div className="form-control bg-light">
-                                        <i className="bi bi-envelope me-2"></i>
-                                        {user.email || "-"}
-                                    </div>
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-danger"
+                                                onClick={handleLogout}
+                                            >
+                                                <i className="bi bi-box-arrow-right me-2"></i>
+                                                Logout
+                                            </button>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        {/* ================= EDIT MODE ================= */}
+                                        <form onSubmit={handleUpdateProfile}>
+                                            <div className="mb-3">
+                                                <label htmlFor="profileName" className="form-label small fw-semibold">
+                                                    Full Name <span className="text-danger">*</span>
+                                                </label>
+                                                <div className="input-group">
+                                                    <span className="input-group-text bg-light">
+                                                        <i className="bi bi-person text-muted"></i>
+                                                    </span>
+                                                    <input
+                                                        type="text"
+                                                        id="profileName"
+                                                        className="form-control"
+                                                        value={editForm.name}
+                                                        onChange={(e) =>
+                                                            setEditForm({ ...editForm, name: e.target.value })
+                                                        }
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
 
-                                </div>
+                                            <div className="mb-3">
+                                                <label className="form-label text-muted small fw-semibold">
+                                                    Email Address (Read-only)
+                                                </label>
+                                                <div className="form-control bg-light text-muted">
+                                                    <i className="bi bi-envelope me-2"></i>
+                                                    {user.email}
+                                                </div>
+                                            </div>
 
-                                {/* ================= PHONE ================= */}
+                                            <div className="mb-4">
+                                                <label htmlFor="profilePhone" className="form-label small fw-semibold">
+                                                    Phone Number <span className="text-danger">*</span>
+                                                </label>
+                                                <div className="input-group">
+                                                    <span className="input-group-text bg-light">
+                                                        <i className="bi bi-telephone text-muted"></i>
+                                                    </span>
+                                                    <input
+                                                        type="tel"
+                                                        id="profilePhone"
+                                                        className="form-control"
+                                                        value={editForm.phone}
+                                                        onChange={(e) =>
+                                                            setEditForm({ ...editForm, phone: e.target.value })
+                                                        }
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
 
-                                <div className="mb-3">
+                                            <div className="d-grid gap-2">
+                                                <button
+                                                    type="submit"
+                                                    className="btn btn-dark"
+                                                    disabled={updateLoading}
+                                                >
+                                                    {updateLoading ? (
+                                                        <>
+                                                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                                            Saving Changes...
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <i className="bi bi-check-lg me-2"></i>
+                                                            Save Changes
+                                                        </>
+                                                    )}
+                                                </button>
 
-                                    <label className="form-label text-muted small">
-                                        Phone Number
-                                    </label>
-
-                                    <div className="form-control bg-light">
-                                        <i className="bi bi-telephone me-2"></i>
-                                        {user.phone || "-"}
-                                    </div>
-
-                                </div>
-
-                                {/* ================= ROLE ================= */}
-
-                                <div className="mb-4">
-
-                                    <label className="form-label text-muted small">
-                                        Account Type
-                                    </label>
-
-                                    <div className="form-control bg-light">
-                                        <i className="bi bi-shield-check me-2"></i>
-                                        {user.role ===
-                                        "admin"
-                                            ? "Administrator"
-                                            : "Client"}
-                                    </div>
-
-                                </div>
-
-                                {/* ================= ACTIONS ================= */}
-
-                                <div className="d-grid gap-2">
-
-                                    <button
-                                        type="button"
-                                        className="btn btn-dark"
-                                        onClick={() =>
-                                            navigate(
-                                                "/my-bookings"
-                                            )
-                                        }
-                                    >
-                                        <i className="bi bi-camera me-2"></i>
-                                        My Bookings
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-danger"
-                                        onClick={
-                                            handleLogout
-                                        }
-                                    >
-                                        <i className="bi bi-box-arrow-right me-2"></i>
-                                        Logout
-                                    </button>
-
-                                </div>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-outline-secondary"
+                                                    disabled={updateLoading}
+                                                    onClick={() => setIsEditing(false)}
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </>
+                                )}
 
                             </div>
 
